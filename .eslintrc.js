@@ -1,32 +1,43 @@
 module.exports = {
   root: true,
-  parser: '@typescript-eslint/parser',
-  parserOptions: {
-    ecmaVersion: 2020,
-    sourceType: 'module',
-  },
   env: {
     browser: true,
-    amd: true,
+    es2021: true,
     node: true,
   },
-  extends: [
-    'eslint:recommended',
-    'plugin:prettier/recommended', // Make sure this is always the last element in the array.
-  ],
-  plugins: ['simple-import-sort', 'prettier'],
-  rules: {
-    'prettier/prettier': [
-      'error',
-      {
-        semi: false,
-        jsxBracketSameLine: false,
-      },
-      { usePrettierrc: true },
-    ],
-    'no-unused-vars': 'off',
-    '@typescript-eslint/explicit-function-return-type': 'off',
-    'simple-import-sort/imports': 'error',
-    'simple-import-sort/exports': 'error',
+  extends: ['eslint:recommended', 'airbnb-base'],
+  parserOptions: {
+    ecmaVersion: 2021,
   },
-}
+  rules: {
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'import/no-extraneous-dependencies': 'off',
+    'import/prefer-default-export': 'off',
+    'import/no-unresolved': 'off',
+    'import/extensions': 'off',
+    'no-restricted-syntax': 'off',
+  },
+  overrides: [
+    {
+      files: ['*.vue'],
+      rules: {
+        'no-unused-vars': 'off',
+        'max-len': [
+          'error',
+          {
+            code: 120,
+          },
+        ],
+      },
+    },
+    {
+      files: ['*.d.ts'],
+      rules: {
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
+    },
+  ],
+};
