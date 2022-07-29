@@ -3,16 +3,16 @@
 }
 
 .s-wrapper {
-  transition: transform .3s ease;
   display: flex;
   flex-flow: row nowrap;
-  width: 100%;
-  position: relative;
   height: 100%;
+  position: relative;
+  transition: transform 0.3s ease;
+  width: 100%;
   z-index: 1;
 }
 
 .s-slide {
-  flex-shrink: 0;
   box-sizing: border-box;
+  flex-shrink: 0;
 }

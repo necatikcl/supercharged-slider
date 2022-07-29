@@ -1,4 +1,4 @@
-import './demo.css';
+import './demo.scss';
 
 import createSlider from '.';
 

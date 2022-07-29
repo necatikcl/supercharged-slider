@@ -1,1 +1,1 @@
-export const middlewareOrder = ['slidesPerView', 'others', 'breakpoints']
+export const middlewareOrder = ['slidesPerView', 'others', 'breakpoints'];

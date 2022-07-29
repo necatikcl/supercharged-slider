@@ -1,13 +1,19 @@
 module.exports = {
   root: true,
+  ignorePatterns: ['.eslintrc.js'],
   env: {
     browser: true,
     es2021: true,
     node: true,
   },
-  extends: ['eslint:recommended', 'airbnb-base'],
+  extends: [
+    'eslint:recommended',
+    'airbnb-base',
+    'airbnb-typescript/base'
+  ],
   parserOptions: {
     ecmaVersion: 2021,
+    project: './tsconfig.json'
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
@@ -17,27 +23,6 @@ module.exports = {
     'import/no-unresolved': 'off',
     'import/extensions': 'off',
     'no-restricted-syntax': 'off',
+    'no-param-reassign': 'off'
   },
-  overrides: [
-    {
-      files: ['*.vue'],
-      rules: {
-        'no-unused-vars': 'off',
-        'max-len': [
-          'error',
-          {
-            code: 120,
-          },
-        ],
-      },
-    },
-    {
-      files: ['*.d.ts'],
-      rules: {
-        'no-unused-vars': 'off',
-        '@typescript-eslint/no-unused-vars': 'off',
-        '@typescript-eslint/no-explicit-any': 'off',
-      },
-    },
-  ],
 };

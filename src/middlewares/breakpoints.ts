@@ -1,6 +1,5 @@
-import runMiddlewares from '~/utils/runMiddlewares'
-
-import { Middleware } from './types'
+import runMiddlewares from '~/utils/runMiddlewares';
+import { Middleware } from '~/types';
 
 interface Props {
   [key: number | string]: Middleware[]
@@ -11,22 +10,22 @@ const breakpoints = (props: Props): Middleware => ({
   callback(slider) {
     const allBreakpoints = Object.keys(props)
       .map(Number)
-      .sort((a, b) => a - b)
+      .sort((a, b) => a - b);
 
-    let currentBreakpoint = null
+    let currentBreakpoint = null;
 
     for (const breakpoint of allBreakpoints) {
       if (window.innerWidth < breakpoint) {
-        currentBreakpoint = breakpoint
-        break
+        currentBreakpoint = breakpoint;
+        break;
       }
     }
 
-    if (!currentBreakpoint) return
+    if (!currentBreakpoint) return;
 
-    const middlewares = props[currentBreakpoint]
-    runMiddlewares(middlewares, slider)
+    const middlewares = props[currentBreakpoint];
+    runMiddlewares(middlewares, slider);
   },
-})
+});
 
-export default breakpoints
+export default breakpoints;

@@ -1,5 +1,5 @@
-import './index.css'
+import './index.scss';
 
-import createSlider from './utils/createSlider'
+import createSlider from './utils/createSlider';
 
-export default createSlider
+export default createSlider;
