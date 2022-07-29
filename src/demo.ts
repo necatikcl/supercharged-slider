@@ -15,14 +15,18 @@ const instance1 = createSlider({
     breakpoints({
       2000: [slidesPerView(2)],
       1500: [slidesPerView(4), spaceBetween(0)],
-      1000: [slidesPerView(3)],
+      1000: [slidesPerView(2)],
     }),
   ],
 });
 
 const instance2 = createSlider({
   element: '.s-slider-2',
-  middlewares: [spaceBetween(16), slidesPerView(2)],
+  middlewares: [
+    spaceBetween(16),
+    slidesPerView(2),
+    pagination(),
+  ],
 });
 
 const instance3 = createSlider({
