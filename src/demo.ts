@@ -5,11 +5,13 @@ import createSlider from '.';
 import breakpoints from './middlewares/breakpoints';
 import slidesPerView from './middlewares/slidesPerView';
 import spaceBetween from './middlewares/spaceBetween';
+import pagination from './utils/pagination';
 
 const instance1 = createSlider({
   element: '.s-slider-1',
   middlewares: [
     spaceBetween(16),
+    pagination(),
     breakpoints({
       2000: [slidesPerView(2)],
       1500: [slidesPerView(4), spaceBetween(0)],
