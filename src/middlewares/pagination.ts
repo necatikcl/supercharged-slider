@@ -3,12 +3,12 @@ import { Middleware } from '~/types';
 const pagination = (): Middleware => ({
   name: 'pagination',
   callback: (slider) => {
-    const paginatonWrapper = slider.element.querySelector('.s-slider-pagination');
+    const paginationWrapper = slider.element.querySelector('.s-slider-pagination');
 
-    if (!paginatonWrapper) return;
+    if (!paginationWrapper) return;
 
-    const paginationPrevButton = paginatonWrapper.querySelector('.s-slider-pagination-prev');
-    const paginationNextButton = paginatonWrapper.querySelector('.s-slider-pagination-next');
+    const paginationPrevButton = paginationWrapper.querySelector('.s-slider-pagination-prev');
+    const paginationNextButton = paginationWrapper.querySelector('.s-slider-pagination-next');
     let paginationBulletHTML = '';
 
     paginationPrevButton?.addEventListener('click', () => {
@@ -24,17 +24,17 @@ const pagination = (): Middleware => ({
       paginationBulletHTML += '<div class="s-slider-pagination-bullets-item"></div>';
     });
 
-    paginatonWrapper.innerHTML = paginationBulletHTML;
+    paginationWrapper.innerHTML = paginationBulletHTML;
 
-    const firstBullet = paginatonWrapper.querySelector('.s-slider-pagination-bullets-item');
-    const bullets = paginatonWrapper.querySelectorAll('.s-slider-pagination-bullets-item');
+    const firstBullet = paginationWrapper.querySelector('.s-slider-pagination-bullets-item');
+    const bullets = paginationWrapper.querySelectorAll('.s-slider-pagination-bullets-item');
     const arrayBullets = [...bullets];
 
     firstBullet?.classList.add('s-slider-pagination-bullets-item-active');
 
     const changeActiveBullet = (bullet:Element) => {
       const indexOfBullet = arrayBullets.indexOf(bullet);
-      const isActiveBullet = paginatonWrapper.querySelector('.s-slider-pagination-bullets-item-active');
+      const isActiveBullet = paginationWrapper.querySelector('.s-slider-pagination-bullets-item-active');
 
       if (!isActiveBullet) return;
 
