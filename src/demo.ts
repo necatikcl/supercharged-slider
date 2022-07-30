@@ -5,9 +5,18 @@ import createSlider from '.';
 import breakpoints from './middlewares/breakpoints';
 import slidesPerView from './middlewares/slidesPerView';
 import spaceBetween from './middlewares/spaceBetween';
+import touch from './middlewares/touch';
+import activeClass from './middlewares/activeClass';
 
 const instance1 = createSlider({
   element: '.s-slider-1',
+  middlewares: [
+    touch(),
+  ],
+});
+
+const instance2 = createSlider({
+  element: '.s-slider-2',
   middlewares: [
     spaceBetween(16),
     breakpoints({
@@ -18,14 +27,9 @@ const instance1 = createSlider({
   ],
 });
 
-const instance2 = createSlider({
-  element: '.s-slider-2',
-  middlewares: [spaceBetween(16), slidesPerView(2)],
-});
-
 const instance3 = createSlider({
   element: '.s-slider-3',
-  middlewares: [spaceBetween(16), slidesPerView(3)],
+  middlewares: [spaceBetween(16), slidesPerView(3), activeClass()],
 });
 
 const instance4 = createSlider({

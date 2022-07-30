@@ -4,6 +4,10 @@
   font-size: 5rem;
   font-weight: 900;
   padding: 2rem;
+
+  &-active {
+    background: rgb(0, 128, 0);
+  }
 }
 
 .s-slider {

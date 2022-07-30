@@ -1,7 +1,10 @@
-import type { Middleware, Slider, SlideChangeHandler } from '~/types';
+import {
+  Middleware, Slider, SlideChangeHandler,
+} from '~/types';
 
 import debounce from './debounce';
 import runMiddlewares from './runMiddlewares';
+import useHooks from './useHooks';
 
 interface Props {
   element: string | HTMLElement
@@ -22,32 +25,39 @@ const createSlider = ({
 
   const wrapper = element.querySelector('.s-wrapper') as HTMLElement;
   const slides = element.querySelectorAll('.s-slide') as unknown as HTMLElement[];
-  const slideChangeHooks: SlideChangeHandler[] = onSlideChange ? [onSlideChange] : [];
+
+  const { addHook: addSlideChangeHook, runHooks: runSlideChangeHooks } = useHooks();
+  const { addHook: addBeforeSlideChangeHook, runHooks: runBeforeSlideChangeHooks } = useHooks();
+
+  if (onSlideChange) addSlideChangeHook(onSlideChange);
 
   const instance: Slider = {
     element,
     wrapper,
-    slides,
+    wrapperPosition: 0,
+    slides: [...slides],
     slideWidth: element.clientWidth,
-    activeIndex: 0,
+    activeView: 0,
     slidesPerView: 1,
     spaceBetween: 0,
-    onSlideChange: (callback) => {
-      slideChangeHooks.push(callback);
-    },
+    onSlideChange: addSlideChangeHook,
+    onBeforeSlideChange: addBeforeSlideChangeHook,
     slideTo: (index) => {
       if (index > instance.slides.length - instance.slidesPerView || index < 0) {
         return;
       }
 
+      runBeforeSlideChangeHooks(instance);
+
       const y = index * (instance.slideWidth + instance.spaceBetween);
 
       instance.scrollWrapperTo(y);
-      instance.activeIndex = index;
-      slideChangeHooks.forEach((hook) => hook(instance));
+      instance.activeView = index;
+
+      runSlideChangeHooks(instance);
     },
-    next: () => instance.slideTo(instance.activeIndex + 1),
-    prev: () => instance.slideTo(instance.activeIndex - 1),
+    next: () => instance.slideTo(instance.activeView + 1),
+    prev: () => instance.slideTo(instance.activeView - 1),
     resizeSlideElements: () => {
       slides.forEach((slide, index) => {
         slide.style.width = `${instance.slideWidth}px`;
@@ -57,6 +67,7 @@ const createSlider = ({
       });
     },
     scrollWrapperTo: (y) => {
+      instance.wrapperPosition = y;
       wrapper.style.transform = `translate3d(-${y}px, 0, 0)`;
     },
   };

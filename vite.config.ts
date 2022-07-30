@@ -29,5 +29,8 @@ export default defineConfig(({ mode }) => {
         },
       ],
     },
+    server: {
+      hmr: false
+    }
   }
 })
