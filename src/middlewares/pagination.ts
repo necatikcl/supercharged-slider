@@ -22,9 +22,9 @@ const pagination = (): Middleware => ({
 
     firstBullet?.classList.add('s-slider-pagination-bullets-item-active');
 
-    const changeActiveBullet = (activeIndex:number) => {
+    const changeActiveBullet = () => {
       const isActiveBullet = paginationWrapper.querySelector('.s-slider-pagination-bullets-item-active');
-      const bullet = arrayBullets[activeIndex];
+      const bullet = arrayBullets[slider.activeView];
 
       if (isActiveBullet) {
         isActiveBullet.classList.remove('s-slider-pagination-bullets-item-active');
@@ -36,9 +36,11 @@ const pagination = (): Middleware => ({
       const indexOfBullet = arrayBullets.indexOf(bullet);
       bullet.addEventListener('click', () => {
         slider.slideTo(indexOfBullet);
-        changeActiveBullet(slider.activeIndex);
+        changeActiveBullet();
       });
     });
+
+    slider.onSlideChange(changeActiveBullet);
   },
 });
 

@@ -2,21 +2,18 @@ import './demo.scss';
 
 import createSlider from '.';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import breakpoints from './middlewares/breakpoints';
 import slidesPerView from './middlewares/slidesPerView';
 import spaceBetween from './middlewares/spaceBetween';
 import pagination from './middlewares/pagination';
+import touch from './middlewares/touch';
+import activeClass from './middlewares/activeClass';
 
 const instance1 = createSlider({
   element: '.s-slider-1',
   middlewares: [
-    spaceBetween(16),
-    pagination(),
-    breakpoints({
-      2000: [slidesPerView(2)],
-      1500: [slidesPerView(4), spaceBetween(0)],
-      1000: [slidesPerView(2)],
-    }),
+    touch(),
   ],
 });
 
@@ -31,7 +28,7 @@ const instance2 = createSlider({
 
 const instance3 = createSlider({
   element: '.s-slider-3',
-  middlewares: [spaceBetween(16), slidesPerView(3)],
+  middlewares: [spaceBetween(16), slidesPerView(3), activeClass()],
 });
 
 const instance4 = createSlider({
