@@ -3,17 +3,13 @@ import { Middleware } from '~/types';
 const pagination = (): Middleware => ({
   name: 'pagination',
   callback: (slider) => {
-    const arraySlides = [...slider.slides];
     const paginatonWrapper = slider.element.querySelector('.s-slider-pagination');
 
     if (!paginatonWrapper) return;
 
-    const paginationBulletsWrapper = paginatonWrapper.querySelector('.s-slider-pagination-bullets');
-    const paginationBulletHtml = `
-    <div class="s-slider-pagination-bullets-item"></div>
-    `;
     const paginationPrevButton = paginatonWrapper.querySelector('.s-slider-pagination-prev');
     const paginationNextButton = paginatonWrapper.querySelector('.s-slider-pagination-next');
+    let paginationBulletHTML = '';
 
     paginationPrevButton?.addEventListener('click', () => {
       slider.prev();
@@ -23,20 +19,34 @@ const pagination = (): Middleware => ({
       slider.next();
     });
 
-    if (!paginationBulletsWrapper) return;
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    arraySlides.forEach((slide) => {
-      paginationBulletsWrapper.insertAdjacentHTML('beforeend', paginationBulletHtml);
+    slider.slides.forEach((slide) => {
+      paginationBulletHTML += '<div class="s-slider-pagination-bullets-item"></div>';
     });
 
-    const bullets = paginationBulletsWrapper.querySelectorAll('.s-slider-pagination-bullets-item');
+    paginatonWrapper.innerHTML = paginationBulletHTML;
+
+    const firstBullet = paginatonWrapper.querySelector('.s-slider-pagination-bullets-item');
+    const bullets = paginatonWrapper.querySelectorAll('.s-slider-pagination-bullets-item');
+    const arrayBullets = [...bullets];
+
+    firstBullet?.classList.add('s-slider-pagination-bullets-item-active');
+
+    const changeActiveBullet = (bullet:Element) => {
+      const indexOfBullet = arrayBullets.indexOf(bullet);
+      const isActiveBullet = paginatonWrapper.querySelector('.s-slider-pagination-bullets-item-active');
+
+      if (!isActiveBullet) return;
+
+      isActiveBullet.classList.remove('s-slider-pagination-bullets-item-active');
+      arrayBullets[indexOfBullet].classList.add('s-slider-pagination-bullets-item-active');
+    };
 
     bullets.forEach((bullet) => {
+      const indexOfBullet = arrayBullets.indexOf(bullet);
       bullet.addEventListener('click', () => {
-        const indexOfBullet = [...bullets].indexOf(bullet);
-
         slider.slideTo(indexOfBullet);
+        changeActiveBullet(bullet);
       });
     });
   },
