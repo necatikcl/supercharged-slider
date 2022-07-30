@@ -1,14 +1,19 @@
-import type { Middleware, Slider } from '~/types';
+import type { Middleware, Slider, SlideChangeHandler } from '~/types';
 
 import debounce from './debounce';
 import runMiddlewares from './runMiddlewares';
 
 interface Props {
   element: string | HTMLElement
-  middlewares?: Middleware[]
+  middlewares?: Middleware[],
+  onSlideChange?: SlideChangeHandler
 }
 
-const createSlider = ({ element: _element, middlewares = [] }: Props): Slider | null => {
+const createSlider = ({
+  element: _element,
+  middlewares = [],
+  onSlideChange,
+}: Props): Slider | null => {
   const element = (
     _element instanceof HTMLElement ? _element : document.querySelector(_element)
   ) as HTMLElement;
@@ -17,6 +22,7 @@ const createSlider = ({ element: _element, middlewares = [] }: Props): Slider | 
 
   const wrapper = element.querySelector('.s-wrapper') as HTMLElement;
   const slides = element.querySelectorAll('.s-slide') as unknown as HTMLElement[];
+  const slideChangeHooks: SlideChangeHandler[] = onSlideChange ? [onSlideChange] : [];
 
   const instance: Slider = {
     element,
@@ -26,7 +32,10 @@ const createSlider = ({ element: _element, middlewares = [] }: Props): Slider | 
     activeIndex: 0,
     slidesPerView: 1,
     spaceBetween: 0,
-    slideTo: (index: number) => {
+    onSlideChange: (callback) => {
+      slideChangeHooks.push(callback);
+    },
+    slideTo: (index) => {
       if (index > instance.slides.length - instance.slidesPerView || index < 0) {
         return;
       }
@@ -35,6 +44,7 @@ const createSlider = ({ element: _element, middlewares = [] }: Props): Slider | 
 
       instance.scrollWrapperTo(y);
       instance.activeIndex = index;
+      slideChangeHooks.forEach((hook) => hook(instance));
     },
     next: () => instance.slideTo(instance.activeIndex + 1),
     prev: () => instance.slideTo(instance.activeIndex - 1),

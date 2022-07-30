@@ -1,6 +1,9 @@
+export type SlideChangeHandler = (slider: Slider) => void;
+
 export interface Slider {
   element: HTMLElement
-  wrapper: HTMLElement
+  wrapper: HTMLElement,
+  wrapperPosition: number,
   slides: HTMLElement[]
   slideWidth: number
   activeIndex: number
@@ -10,7 +13,8 @@ export interface Slider {
   prev: () => void
   slideTo: (index: number) => void
   resizeSlideElements: () => void
-  scrollWrapperTo: (y: number) => void
+  scrollWrapperTo: (y: number) => void,
+  onSlideChange: (callback: SlideChangeHandler) => void
 }
 
 export type Middleware = {
