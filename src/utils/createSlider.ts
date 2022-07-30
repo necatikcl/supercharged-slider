@@ -3,6 +3,7 @@ import {
 } from '~/types';
 
 import debounce from './debounce';
+import getSlideY from './getSlideY';
 import runMiddlewares from './runMiddlewares';
 import useHooks from './useHooks';
 
@@ -49,7 +50,7 @@ const createSlider = ({
 
       runBeforeSlideChangeHooks(instance);
 
-      const y = index * (instance.slideWidth + instance.spaceBetween);
+      const y = getSlideY(index, instance);
 
       instance.scrollWrapperTo(y);
       instance.activeView = index;
@@ -73,6 +74,9 @@ const createSlider = ({
   };
 
   const processMiddlewares = () => {
+    instance.slideWidth = instance.element.clientWidth;
+    instance.spaceBetween = 0;
+
     runMiddlewares(middlewares, instance);
     instance.resizeSlideElements();
   };

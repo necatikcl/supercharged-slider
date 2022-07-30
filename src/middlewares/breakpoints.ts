@@ -10,20 +10,28 @@ const breakpoints = (props: Props): Middleware => ({
   callback(slider) {
     const allBreakpoints = Object.keys(props)
       .map(Number)
-      .sort((a, b) => a - b);
+      .sort((a, b) => b - a);
 
+    const middlewares: Middleware[] = [];
     let currentBreakpoint = null;
 
     for (const breakpoint of allBreakpoints) {
-      if (window.innerWidth < breakpoint) {
+      if (window.innerWidth <= breakpoint) {
         currentBreakpoint = breakpoint;
-        break;
+
+        props[breakpoint].forEach((middleware) => {
+          const middlewareInList = middlewares.findIndex((item) => item.name === middleware.name);
+
+          if (middlewareInList !== -1) {
+            middlewares.splice(middlewareInList, 1);
+          }
+
+          middlewares.push(middleware);
+        });
       }
     }
 
     if (!currentBreakpoint) return;
-
-    const middlewares = props[currentBreakpoint];
     runMiddlewares(middlewares, slider);
   },
 });

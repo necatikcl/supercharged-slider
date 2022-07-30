@@ -18,10 +18,9 @@ const instance1 = createSlider({
 const instance2 = createSlider({
   element: '.s-slider-2',
   middlewares: [
-    spaceBetween(16),
     breakpoints({
-      2000: [slidesPerView(2)],
-      1500: [slidesPerView(4), spaceBetween(0)],
+      2000: [slidesPerView(2), spaceBetween(16)],
+      1500: [slidesPerView(4), spaceBetween(8)],
       1000: [slidesPerView(3)],
     }),
   ],
@@ -29,17 +28,17 @@ const instance2 = createSlider({
 
 const instance3 = createSlider({
   element: '.s-slider-3',
-  middlewares: [spaceBetween(16), slidesPerView(3), activeClass()],
+  middlewares: [slidesPerView(3), activeClass()],
 });
 
 const instance4 = createSlider({
   element: '.s-slider-4',
-  middlewares: [spaceBetween(16), slidesPerView(4)],
+  middlewares: [slidesPerView(4)],
 });
 
 const instance5 = createSlider({
   element: '.s-slider-5',
-  middlewares: [spaceBetween(16), slidesPerView(5)],
+  middlewares: [slidesPerView(5)],
 });
 
 const instances = [instance1, instance2, instance3, instance4, instance5];

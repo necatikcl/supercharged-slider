@@ -1,10 +1,12 @@
 .s-slide {
+  align-items: center;
   background-color: rgb(16, 106, 0);
-  border-right: 2px solid #f00;
-  font-size: 5rem;
+  box-shadow: inset -5px 0 0 rgb(255, 0, 0);
+  display: flex;
+  font-size: 4rem;
   font-weight: 900;
-  padding: 2rem;
-
+  justify-content: center;
+  
   &-active {
     background: rgb(0, 128, 0);
   }
