@@ -25,8 +25,8 @@ const pagination = (): Middleware => ({
 
     if (!paginationBulletsWrapper) return;
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     arraySlides.forEach((slide) => {
-      console.log(slide);
       paginationBulletsWrapper.insertAdjacentHTML('beforeend', paginationBulletHtml);
     });
 
@@ -34,7 +34,9 @@ const pagination = (): Middleware => ({
 
     bullets.forEach((bullet) => {
       bullet.addEventListener('click', () => {
-        slider.next();
+        const indexOfBullet = [...bullets].indexOf(bullet);
+
+        slider.slideTo(indexOfBullet);
       });
     });
   },

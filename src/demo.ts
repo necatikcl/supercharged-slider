@@ -5,7 +5,7 @@ import createSlider from '.';
 import breakpoints from './middlewares/breakpoints';
 import slidesPerView from './middlewares/slidesPerView';
 import spaceBetween from './middlewares/spaceBetween';
-import pagination from './utils/pagination';
+import pagination from './middlewares/pagination';
 
 const instance1 = createSlider({
   element: '.s-slider-1',
