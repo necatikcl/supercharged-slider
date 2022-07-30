@@ -7,17 +7,7 @@ const pagination = (): Middleware => ({
 
     if (!paginationWrapper) return;
 
-    const paginationPrevButton = paginationWrapper.querySelector('.s-slider-pagination-prev');
-    const paginationNextButton = paginationWrapper.querySelector('.s-slider-pagination-next');
     let paginationBulletHTML = '';
-
-    paginationPrevButton?.addEventListener('click', () => {
-      slider.prev();
-    });
-
-    paginationNextButton?.addEventListener('click', () => {
-      slider.next();
-    });
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     slider.slides.forEach((slide) => {
@@ -32,21 +22,21 @@ const pagination = (): Middleware => ({
 
     firstBullet?.classList.add('s-slider-pagination-bullets-item-active');
 
-    const changeActiveBullet = (bullet:Element) => {
-      const indexOfBullet = arrayBullets.indexOf(bullet);
+    const changeActiveBullet = (activeIndex:number) => {
       const isActiveBullet = paginationWrapper.querySelector('.s-slider-pagination-bullets-item-active');
+      const bullet = arrayBullets[activeIndex];
 
-      if (!isActiveBullet) return;
-
-      isActiveBullet.classList.remove('s-slider-pagination-bullets-item-active');
-      arrayBullets[indexOfBullet].classList.add('s-slider-pagination-bullets-item-active');
+      if (isActiveBullet) {
+        isActiveBullet.classList.remove('s-slider-pagination-bullets-item-active');
+        bullet.classList.add('s-slider-pagination-bullets-item-active');
+      }
     };
 
     bullets.forEach((bullet) => {
       const indexOfBullet = arrayBullets.indexOf(bullet);
       bullet.addEventListener('click', () => {
         slider.slideTo(indexOfBullet);
-        changeActiveBullet(bullet);
+        changeActiveBullet(slider.activeIndex);
       });
     });
   },
