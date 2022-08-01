@@ -1,6 +1,10 @@
 import { Middleware } from '~/types';
 
-const pagination = (): Middleware => ({
+interface Props {
+  type:string
+}
+
+const pagination = (props: Props): Middleware => ({
   name: 'pagination',
   callback: (slider) => {
     const paginationWrapper = slider.element.querySelector('.s-slider-pagination');
@@ -9,10 +13,21 @@ const pagination = (): Middleware => ({
 
     let paginationBulletHTML = '';
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    slider.slides.forEach((slide) => {
-      paginationBulletHTML += '<div class="s-slider-pagination-bullets-item"></div>';
-    });
+    if (props.type === 'bullet') {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      slider.slides.forEach((slide) => {
+        paginationBulletHTML += '<div class="s-slider-pagination-bullets-item"></div>';
+      });
+    }
+
+    if (props.type === 'bulletNumber') {
+      let counter = 1;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      slider.slides.forEach((slide) => {
+        paginationBulletHTML += `<div class="s-slider-pagination-bullets-item">${counter}</div>`;
+        counter += 1;
+      });
+    }
 
     paginationWrapper.innerHTML = paginationBulletHTML;
 
@@ -41,6 +56,24 @@ const pagination = (): Middleware => ({
     });
 
     slider.onSlideChange(changeActiveBullet);
+
+    if (props.type === 'number') {
+      let counter = 0;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      slider.slides.forEach((slide) => {
+        counter += 1;
+      });
+
+      const paginationNumber = () => {
+        let paginationNumberHTML = '';
+        paginationNumberHTML += `<div class="s-slider-pagination-number">${slider.activeView + 1}/${counter}</div>`;
+        paginationWrapper.innerHTML = paginationNumberHTML;
+      };
+
+      paginationNumber();
+
+      slider.onSlideChange(paginationNumber);
+    }
   },
 });
 

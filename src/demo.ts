@@ -22,7 +22,7 @@ const instance2 = createSlider({
   middlewares: [
     spaceBetween(16),
     slidesPerView(2),
-    pagination(),
+    pagination({ type: 'number' }),
   ],
 });
 
