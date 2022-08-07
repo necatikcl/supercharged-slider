@@ -1,7 +1,7 @@
 {
   "name": "supercharged-slider",
-  "version": "0.1.0",
-  "description": "A starter for build library with Typescript with the fast Vite and all static code testing with Eslint and formatting with Prettier.",
+  "version": "0.1.1",
+  "description": "A super modular tiny slider library.",
   "license": "MIT",
   "scripts": {
     "dev": "vite",
@@ -40,5 +40,5 @@
     "typescript": "4.5.4"
   },
   "pre-commit": "lint",
-  "keywords": []
+  "keywords": ["slider", "tiny", "modular", "carousel"]
 }

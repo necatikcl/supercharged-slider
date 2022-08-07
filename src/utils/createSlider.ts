@@ -1,31 +1,41 @@
-import {
-  Middleware, Slider, SlideChangeHandler,
-} from '~/types';
+import { Middleware, SlideChangeHandler, Slider } from '~/types';
 
 import debounce from './debounce';
+import getElement, { getElements, Selector, SelectorMultiple } from './getElement';
 import getSlideY from './getSlideY';
 import runMiddlewares from './runMiddlewares';
 import useHooks from './useHooks';
 
 interface Props {
-  element: string | HTMLElement
+  element: Selector,
+  wrapper?: Selector,
+  slides?: SelectorMultiple,
   middlewares?: Middleware[],
   onSlideChange?: SlideChangeHandler
 }
 
 const createSlider = ({
-  element: _element,
+  element: elementSelector,
+  wrapper: wrapperSelector,
+  slides: slidesSelector,
   middlewares = [],
   onSlideChange,
 }: Props): Slider | null => {
-  const element = (
-    _element instanceof HTMLElement ? _element : document.querySelector(_element)
-  ) as HTMLElement;
+  const element = getElement(elementSelector);
 
   if (!element) return null;
 
-  const wrapper = element.querySelector('.s-wrapper') as HTMLElement;
-  const slides = element.querySelectorAll('.s-slide') as unknown as HTMLElement[];
+  const wrapper = getElement(wrapperSelector, () => element.querySelector('.s-wrapper') as HTMLElement);
+
+  if (!wrapper) {
+    throw new Error('[supercharged-slider] Wrapper element not found');
+  }
+
+  const slides = getElements(slidesSelector, () => wrapper.querySelectorAll('.s-slide'));
+
+  if (!slides) {
+    throw new Error('[supercharged-slider] Slides are not found');
+  }
 
   const { addHook: addSlideChangeHook, runHooks: runSlideChangeHooks } = useHooks();
   const { addHook: addBeforeSlideChangeHook, runHooks: runBeforeSlideChangeHooks } = useHooks();
