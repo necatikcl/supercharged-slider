@@ -3,24 +3,30 @@ import { Middleware } from '~/types';
 const touch = (): Middleware => ({
   name: 'touch',
   callback: (slider) => {
-    let isDragging = false;
+    const isVertical = () => slider.direction === 'vertical';
     const isTargetValid = (e: MouseEvent) => e.composedPath().includes(slider.element);
+
+    let isDragging = false;
 
     let lastPositionBeforeMove = 0;
     let lastCursorPosition = 0;
     let lastWrapperPosition = 0;
 
     const onMouseMove = (e: MouseEvent) => {
+      const mousePosition = isVertical() ? e.clientY : e.clientX;
+      const scrollKey = isVertical() ? 'scrollHeight' : 'scrollWidth';
+      const clientKey = isVertical() ? 'clientHeight' : 'clientWidth';
+
       if (lastCursorPosition === 0) {
-        lastCursorPosition = e.screenX;
+        lastCursorPosition = mousePosition;
         return;
       }
 
-      const threshold = slider.wrapper.scrollWidth - slider.element.clientWidth;
-      const distance = (e.screenX - lastCursorPosition) * -1;
+      const threshold = slider.wrapper[scrollKey] - slider.element[clientKey];
+      const distance = (mousePosition - lastCursorPosition) * -1;
       const newPosition = slider.wrapperPosition + distance;
 
-      lastCursorPosition = e.screenX;
+      lastCursorPosition = mousePosition;
       lastWrapperPosition = Math.min(newPosition, threshold);
 
       slider.scrollWrapperTo(lastWrapperPosition);
@@ -39,8 +45,9 @@ const touch = (): Middleware => ({
 
     document.addEventListener('mouseup', () => {
       if (!isDragging) return;
+      const rectKey = isVertical() ? 'slideHeight' : 'slideWidth';
 
-      const threshold = slider.slideWidth / 4;
+      const threshold = (slider[rectKey] || 0) / 4;
       const difference = lastPositionBeforeMove - lastWrapperPosition;
       const movedRight = difference < 0;
       const passedThreshold = Math.abs(difference) > threshold;
