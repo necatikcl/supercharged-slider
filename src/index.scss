@@ -1,5 +1,11 @@
 .s-slider {
   overflow: hidden;
+
+  &-vertical {
+    .s-wrapper {
+      flex-direction: column;
+    }
+  }
 }
 
 .s-wrapper {

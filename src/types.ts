@@ -6,9 +6,11 @@ export interface Slider {
   wrapperPosition: number,
   slides: HTMLElement[]
   slideWidth: number
+  slideHeight?: number
   activeView: number
   slidesPerView: number
   spaceBetween: number
+  direction?: 'vertical'
   next: () => void
   prev: () => void
   slideTo: (index: number) => void
@@ -16,6 +18,8 @@ export interface Slider {
   scrollWrapperTo: (y: number) => void,
   onSlideChange: (callback: SlideChangeHandler) => void
   onBeforeSlideChange: (callback: SlideChangeHandler) => void
+  runBeforeSlideChangeHooks: (slider: Slider) => void
+  runSlideChangeHooks: (slider: Slider) => void
 }
 
 export type Middleware = {

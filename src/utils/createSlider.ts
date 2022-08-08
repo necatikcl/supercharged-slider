@@ -2,7 +2,7 @@ import { Middleware, SlideChangeHandler, Slider } from '~/types';
 
 import debounce from './debounce';
 import getElement, { getElements, Selector, SelectorMultiple } from './getElement';
-import getSlideY from './getSlideY';
+import { getSlideX } from './getSlidePosition';
 import runMiddlewares from './runMiddlewares';
 import useHooks from './useHooks';
 
@@ -53,16 +53,20 @@ const createSlider = ({
     spaceBetween: 0,
     onSlideChange: addSlideChangeHook,
     onBeforeSlideChange: addBeforeSlideChangeHook,
+    runBeforeSlideChangeHooks,
+    runSlideChangeHooks,
     slideTo: (index) => {
-      if (index > instance.slides.length - instance.slidesPerView || index < 0) {
+      const max = instance.slides.length - instance.slidesPerView;
+
+      if (index > max || index < 0) {
         return;
       }
 
       runBeforeSlideChangeHooks(instance);
 
-      const y = getSlideY(index, instance);
+      const x = getSlideX(index, instance);
 
-      instance.scrollWrapperTo(y);
+      instance.scrollWrapperTo(x);
       instance.activeView = index;
 
       runSlideChangeHooks(instance);
@@ -77,9 +81,9 @@ const createSlider = ({
         slide.style.marginRight = `${instance.spaceBetween}px`;
       });
     },
-    scrollWrapperTo: (y) => {
-      instance.wrapperPosition = y;
-      wrapper.style.transform = `translate3d(-${y}px, 0, 0)`;
+    scrollWrapperTo: (x) => {
+      instance.wrapperPosition = x;
+      wrapper.style.transform = `translate3d(-${x}px, 0, 0)`;
     },
   };
 

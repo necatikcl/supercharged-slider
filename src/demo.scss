@@ -6,7 +6,8 @@
   font-size: 4rem;
   font-weight: 900;
   justify-content: center;
-  
+  user-select: none;
+
   &-active {
     background: rgb(0, 128, 0);
   }
@@ -14,4 +15,8 @@
 
 .s-slider {
   margin-bottom: 1rem;
+}
+
+.s-slider-1 {
+  height: 200px;
 }

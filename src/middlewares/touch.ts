@@ -7,27 +7,29 @@ const touch = (): Middleware => ({
     const isTargetValid = (e: MouseEvent) => e.composedPath().includes(slider.element);
 
     let lastPositionBeforeMove = 0;
-    let lastMovePosition = 0;
+    let lastCursorPosition = 0;
+    let lastWrapperPosition = 0;
+
     const onMouseMove = (e: MouseEvent) => {
-      if (lastMovePosition === 0) {
-        lastMovePosition = e.screenX;
+      if (lastCursorPosition === 0) {
+        lastCursorPosition = e.screenX;
         return;
       }
 
-      const mousePosition = (e.screenX - lastMovePosition) * -1;
+      const threshold = slider.wrapper.scrollWidth - slider.element.clientWidth;
+      const distance = (e.screenX - lastCursorPosition) * -1;
+      const newPosition = slider.wrapperPosition + distance;
 
-      const newPosition = slider.wrapperPosition + mousePosition;
-      if (newPosition < 0) return;
+      lastCursorPosition = e.screenX;
+      lastWrapperPosition = Math.min(newPosition, threshold);
 
-      lastMovePosition = e.screenX;
-      slider.scrollWrapperTo(newPosition);
+      slider.scrollWrapperTo(lastWrapperPosition);
     };
 
     document.addEventListener('mousedown', (e) => {
       const valid = isTargetValid(e);
       if (!valid) return;
 
-      console.log('mousedown');
       isDragging = true;
       lastPositionBeforeMove = slider.wrapperPosition;
 
@@ -38,35 +40,22 @@ const touch = (): Middleware => ({
     document.addEventListener('mouseup', () => {
       if (!isDragging) return;
 
-      console.log('mouseup');
-      isDragging = false;
+      const threshold = slider.slideWidth / 4;
+      const difference = lastPositionBeforeMove - lastWrapperPosition;
+      const movedRight = difference < 0;
+      const passedThreshold = Math.abs(difference) > threshold;
 
-      document.removeEventListener('mousemove', onMouseMove);
-
-      const positionDiff = lastPositionBeforeMove - slider.wrapperPosition;
-      console.log({
-        lastMovePosition,
-        lastPositionBeforeMove,
-        slideWidth: slider.slideWidth,
-        positionDiff,
-      });
-
-      const isMoreThanHalf = Math.abs(positionDiff) > slider.slideWidth / 4;
-
-      if (positionDiff < 0) {
-        if (isMoreThanHalf && slider.activeView < slider.slides.length - 1) {
-          slider.next();
-        } else {
-          slider.scrollWrapperTo(lastPositionBeforeMove);
-        }
-      } else if (isMoreThanHalf) {
-        slider.prev();
+      if (passedThreshold) {
+        if (movedRight) slider.next();
+        else slider.prev();
       } else {
         slider.scrollWrapperTo(lastPositionBeforeMove);
       }
 
+      lastCursorPosition = 0;
+      isDragging = false;
       slider.wrapper.style.transitionDuration = '';
-      lastMovePosition = 0;
+      document.removeEventListener('mousemove', onMouseMove);
     });
   },
 });

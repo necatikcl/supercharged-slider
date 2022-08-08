@@ -1,23 +1,26 @@
 import './demo.scss';
 
-import createSlider from '.';
+import { createSlider } from '.';
 
 import breakpoints from './middlewares/breakpoints';
 import slidesPerView from './middlewares/slidesPerView';
 import spaceBetween from './middlewares/spaceBetween';
 import touch from './middlewares/touch';
 import activeClass from './middlewares/activeClass';
+import vertical from './middlewares/vertical';
 
 const instance1 = createSlider({
   element: '.s-slider-1',
   middlewares: [
     touch(),
+    vertical(),
   ],
 });
 
 const instance2 = createSlider({
   element: '.s-slider-2',
   middlewares: [
+    touch(),
     breakpoints({
       2000: [slidesPerView(2), spaceBetween(16)],
       1500: [slidesPerView(4), spaceBetween(8)],

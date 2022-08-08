@@ -12,14 +12,16 @@ export default defineConfig(({ mode }) => {
       lib: {
         entry: resolve(__dirname, 'src/index.ts'),
         name: 'supercharged-slider',
-        fileName: 'index',
-        formats: ['es', 'cjs', 'umd'],
+        fileName: (format) => `index.js`,
+        formats: ['es'],
       },
     }
   }
 
   return {
-    plugins: [dts()],
+    plugins: [dts({
+      insertTypesEntry: true,
+    }),],
     build,
     resolve: {
       alias: [
