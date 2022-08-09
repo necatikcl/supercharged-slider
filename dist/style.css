@@ -1,1 +1,1 @@
-.s-slider{overflow:hidden}.s-wrapper{display:flex;flex-flow:row nowrap;height:100%;position:relative;transition:transform .3s ease;width:100%;z-index:1}.s-slide{box-sizing:border-box;flex-shrink:0}
+.s-slider{overflow:hidden}.s-slider-vertical .s-wrapper{flex-direction:column}.s-wrapper{display:flex;flex-flow:row nowrap;height:100%;position:relative;transition:transform .3s ease;width:100%;z-index:1}.s-slide{box-sizing:border-box;flex-shrink:0}

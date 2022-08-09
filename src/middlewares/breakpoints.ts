@@ -5,6 +5,8 @@ interface Props {
   [key: number | string]: Middleware[]
 }
 
+const middlewaresToRerun = ['slidesPerView', 'spaceBetween'];
+
 const breakpoints = (props: Props): Middleware => ({
   name: 'breakpoints',
   callback(slider) {
@@ -12,7 +14,7 @@ const breakpoints = (props: Props): Middleware => ({
       .map(Number)
       .sort((a, b) => b - a);
 
-    const middlewares: Middleware[] = [];
+    const middlewares: { [key: string]: Middleware } = {};
     let currentBreakpoint = null;
 
     for (const breakpoint of allBreakpoints) {
@@ -20,19 +22,24 @@ const breakpoints = (props: Props): Middleware => ({
         currentBreakpoint = breakpoint;
 
         props[breakpoint].forEach((middleware) => {
-          const middlewareInList = middlewares.findIndex((item) => item.name === middleware.name);
-
-          if (middlewareInList !== -1) {
-            middlewares.splice(middlewareInList, 1);
-          }
-
-          middlewares.push(middleware);
+          middlewares[middleware.name] = middleware;
         });
       }
     }
 
+    slider.middlewares
+      .filter((middleware) => middlewaresToRerun.includes(middleware.name))
+      .forEach((middleware) => {
+        if (middlewares[middleware.name]) return;
+
+        middlewares[middleware.name] = middleware;
+      });
+
     if (!currentBreakpoint) return;
-    runMiddlewares(middlewares, slider);
+
+    console.log({ middlewares, currentBreakpoint });
+
+    runMiddlewares(Object.values(middlewares), slider);
   },
 });
 

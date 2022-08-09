@@ -21,7 +21,14 @@ const activeClass = (activeClassName = 's-slide-active'): Middleware => ({
     };
 
     handleSlideChange();
-    slider.onSlideChange(handleSlideChange);
+
+    const onSlideChange = () => {
+      handleSlideChange();
+
+      slider.removeSlideChangeHook(onSlideChange);
+    };
+
+    slider.onSlideChange(onSlideChange);
   },
 });
 

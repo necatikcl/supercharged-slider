@@ -1,14 +1,21 @@
-const useHooks = <T extends any[]>() => {
-  type Hook = (...args: T) => void;
+import type { Hook } from '..';
 
-  const hooks: Hook[] = [];
+const useHooks = <T extends unknown>() => {
+  type HookType = Hook<T>;
 
-  const addHook = (hook: Hook) => hooks.push(hook);
-  const runHooks = (...args: T) => hooks.forEach((hook) => hook(...args));
+  const hooks: HookType[] = [];
+
+  const addHook = (hook: HookType) => hooks.push(hook);
+  const removeHook = (hook: HookType) => {
+    const index = hooks.indexOf(hook);
+    if (index > -1) hooks.splice(index, 1);
+  };
+  const runHooks = (props: T) => hooks.forEach((hook) => hook(props));
 
   return {
     addHook,
     runHooks,
+    removeHook,
     hooks,
   };
 };

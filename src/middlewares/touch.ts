@@ -1,5 +1,6 @@
 import { Middleware } from '~/types';
 
+// TODO: TOUCH HALA PROBLEMLİ, MOBİLDE!
 const touch = (): Middleware => ({
   name: 'touch',
   callback: (slider) => {
@@ -7,8 +8,7 @@ const touch = (): Middleware => ({
     const isTargetValid = (e: MouseEvent) => e.composedPath().includes(slider.element);
 
     let isDragging = false;
-
-    let lastPositionBeforeMove = 0;
+    let wrapperPositionBeforeDrag = 0;
     let lastCursorPosition = 0;
     let lastWrapperPosition = 0;
 
@@ -27,43 +27,55 @@ const touch = (): Middleware => ({
       const newPosition = slider.wrapperPosition + distance;
 
       lastCursorPosition = mousePosition;
-      lastWrapperPosition = Math.min(newPosition, threshold);
+      lastWrapperPosition = Math.max(Math.min(newPosition, threshold), 0);
 
       slider.scrollWrapperTo(lastWrapperPosition);
     };
 
-    document.addEventListener('mousedown', (e) => {
-      const valid = isTargetValid(e);
-      if (!valid) return;
+    const onMouseDown = (e: MouseEvent) => {
+      if (!isTargetValid(e)) return;
 
       isDragging = true;
-      lastPositionBeforeMove = slider.wrapperPosition;
+      wrapperPositionBeforeDrag = slider.wrapperPosition;
 
       slider.wrapper.style.transitionDuration = '0ms';
       document.addEventListener('mousemove', onMouseMove);
-    });
+    };
 
-    document.addEventListener('mouseup', () => {
+    const onMouseUp = () => {
       if (!isDragging) return;
       const rectKey = isVertical() ? 'slideHeight' : 'slideWidth';
+      const newIndex = Math.round(lastWrapperPosition / (slider[rectKey] || 0));
 
-      const threshold = (slider[rectKey] || 0) / 4;
-      const difference = lastPositionBeforeMove - lastWrapperPosition;
-      const movedRight = difference < 0;
-      const passedThreshold = Math.abs(difference) > threshold;
-
-      if (passedThreshold) {
-        if (movedRight) slider.next();
-        else slider.prev();
+      if (slider.activeView !== newIndex) {
+        slider.slideTo(newIndex);
       } else {
-        slider.scrollWrapperTo(lastPositionBeforeMove);
+        slider.scrollWrapperTo(wrapperPositionBeforeDrag);
       }
 
       lastCursorPosition = 0;
       isDragging = false;
       slider.wrapper.style.transitionDuration = '';
       document.removeEventListener('mousemove', onMouseMove);
-    });
+    };
+
+    document.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('mouseup', onMouseUp);
+
+    const onCleanUp = () => {
+      console.log('cleanUp');
+      isDragging = false;
+      wrapperPositionBeforeDrag = 0;
+      lastCursorPosition = 0;
+      lastWrapperPosition = 0;
+
+      document.removeEventListener('mousedown', onMouseDown);
+      document.removeEventListener('mouseup', onMouseUp);
+
+      slider.removeCleanUpHook(onCleanUp);
+    };
+
+    slider.onCleanUp(onCleanUp);
   },
 });
 

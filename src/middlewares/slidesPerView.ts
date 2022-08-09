@@ -8,6 +8,7 @@ const slidesPerView = (count: number): Middleware => ({
 
     slider.slidesPerView = count;
     slider.slideWidth = slideWidth;
+    slider.slideStyles.width = `${slideWidth}px`;
   },
 });
 

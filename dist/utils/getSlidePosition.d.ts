@@ -1,3 +1,4 @@
 import { Slider } from '../types';
+declare const getSlideX: (index: number, slider: Slider) => number;
 declare const getSlideY: (index: number, slider: Slider) => number;
-export default getSlideY;
+export { getSlideX, getSlideY };

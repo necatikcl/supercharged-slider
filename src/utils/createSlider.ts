@@ -1,4 +1,4 @@
-import { Middleware, SlideChangeHandler, Slider } from '~/types';
+import { Middleware, Hook, Slider } from '~/types';
 
 import debounce from './debounce';
 import getElement, { getElements, Selector, SelectorMultiple } from './getElement';
@@ -11,7 +11,7 @@ interface Props {
   wrapper?: Selector,
   slides?: SelectorMultiple,
   middlewares?: Middleware[],
-  onSlideChange?: SlideChangeHandler
+  onSlideChange?: Hook<Slider>
 }
 
 const createSlider = ({
@@ -37,8 +37,21 @@ const createSlider = ({
     throw new Error('[supercharged-slider] Slides are not found');
   }
 
-  const { addHook: addSlideChangeHook, runHooks: runSlideChangeHooks } = useHooks();
-  const { addHook: addBeforeSlideChangeHook, runHooks: runBeforeSlideChangeHooks } = useHooks();
+  const {
+    addHook: addSlideChangeHook,
+    removeHook: removeSlideChangeHook,
+    runHooks: runSlideChangeHooks,
+  } = useHooks<Slider>();
+  const {
+    addHook: addBeforeSlideChangeHook,
+    removeHook: removeBeforeSlideChangeHook,
+    runHooks: runBeforeSlideChangeHooks,
+  } = useHooks<Slider>();
+  const {
+    addHook: addCleanUpHook,
+    runHooks: runCleanUpHooks,
+    removeHook: removeCleanUpHook,
+  } = useHooks<void>();
 
   if (onSlideChange) addSlideChangeHook(onSlideChange);
 
@@ -51,36 +64,41 @@ const createSlider = ({
     activeView: 0,
     slidesPerView: 1,
     spaceBetween: 0,
+    middlewares,
+    slideStyles: {},
+    onCleanUp: addCleanUpHook,
     onSlideChange: addSlideChangeHook,
     onBeforeSlideChange: addBeforeSlideChangeHook,
+    removeCleanUpHook,
+    removeSlideChangeHook,
+    removeBeforeSlideChangeHook,
     runBeforeSlideChangeHooks,
     runSlideChangeHooks,
-    slideTo: (index) => {
+    slideTo: (index, silent = false) => {
       const max = instance.slides.length - instance.slidesPerView;
 
       if (index > max || index < 0) {
         return;
       }
 
-      runBeforeSlideChangeHooks(instance);
+      if (!silent) {
+        runBeforeSlideChangeHooks(instance);
+      }
 
       const x = getSlideX(index, instance);
 
       instance.scrollWrapperTo(x);
       instance.activeView = index;
 
-      runSlideChangeHooks(instance);
+      if (!silent) {
+        runSlideChangeHooks(instance);
+      }
     },
     next: () => instance.slideTo(instance.activeView + 1),
     prev: () => instance.slideTo(instance.activeView - 1),
-    resizeSlideElements: () => {
-      slides.forEach((slide, index) => {
-        slide.style.width = `${instance.slideWidth}px`;
-
-        if (index === instance.slides.length - 1) return;
-        slide.style.marginRight = `${instance.spaceBetween}px`;
-      });
-    },
+    updateSlideStyles: () => slides.forEach(
+      (slide) => Object.assign(slide.style, instance.slideStyles),
+    ),
     scrollWrapperTo: (x) => {
       instance.wrapperPosition = x;
       wrapper.style.transform = `translate3d(-${x}px, 0, 0)`;
@@ -88,11 +106,17 @@ const createSlider = ({
   };
 
   const processMiddlewares = () => {
+    runCleanUpHooks();
+
     instance.slideWidth = instance.element.clientWidth;
+    instance.slideStyles.width = `${instance.slideWidth}px`;
     instance.spaceBetween = 0;
 
     runMiddlewares(middlewares, instance);
-    instance.resizeSlideElements();
+
+    instance.updateSlideStyles();
+
+    instance.slideTo(instance.activeView, true);
   };
 
   processMiddlewares();

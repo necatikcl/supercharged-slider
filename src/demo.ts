@@ -21,10 +21,10 @@ const instance2 = createSlider({
   element: '.s-slider-2',
   middlewares: [
     touch(),
+    spaceBetween(16),
+    slidesPerView(6),
     breakpoints({
-      2000: [slidesPerView(2), spaceBetween(16)],
-      1500: [slidesPerView(4), spaceBetween(8)],
-      1000: [slidesPerView(3)],
+      768: [slidesPerView(1)],
     }),
   ],
 });

@@ -8,14 +8,10 @@ const vertical = (): Middleware => ({
     slider.element.classList.add('s-slider-vertical');
     slider.slideHeight = slider.element.clientHeight;
 
-    slider.resizeSlideElements = () => {
-      slider.slides.forEach((slide, index) => {
-        slide.style.height = `${slider.slideHeight}px`;
-
-        if (index === slider.slides.length - 1) return;
-        slide.style.marginBottom = `${slider.spaceBetween}px`;
-      });
-    };
+    slider.slideStyles.width = '100%';
+    slider.slideStyles.height = `${slider.slideHeight}px`;
+    slider.slideStyles.marginBottom = slider.slideStyles.marginRight;
+    slider.slideStyles.marginRight = '0px';
 
     slider.scrollWrapperTo = (y) => {
       slider.wrapperPosition = y;
