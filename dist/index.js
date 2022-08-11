@@ -315,4 +315,28 @@ const vertical = () => ({
     };
   }
 });
-export { activeClass, breakpoints, createSlider, slidesPerView, spaceBetween, touch, vertical };
+const autoplay = (props) => ({
+  name: "autoplay",
+  callback: (slider) => {
+    let timeout = 0;
+    const start = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        if (slider.activeView + slider.slidesPerView >= slider.slides.length) {
+          slider.slideTo(0);
+        } else {
+          slider.next();
+        }
+      }, props.interval);
+    };
+    start();
+    const onCleanUp = () => {
+      clearTimeout(timeout);
+      slider.removeSlideChangeHook(start);
+      slider.removeCleanUpHook(onCleanUp);
+    };
+    slider.onCleanUp(onCleanUp);
+    slider.onSlideChange(start);
+  }
+});
+export { activeClass, autoplay, breakpoints, createSlider, slidesPerView, spaceBetween, touch, vertical };
