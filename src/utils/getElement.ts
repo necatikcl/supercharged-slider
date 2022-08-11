@@ -1,7 +1,7 @@
-export type Selector<T extends HTMLElement> = string | T | null;
-export type SelectorMultiple<T extends HTMLElement> = string | T[] | NodeList | null;
+export type Selector<T extends HTMLElement = HTMLElement> = string | T | null;
+export type SelectorMultiple<T extends HTMLElement = HTMLElement> = string | T[] | NodeList | null;
 
-const getElement = <T extends HTMLElement>(
+const getElement = <T extends HTMLElement = HTMLElement>(
   selector?: Selector<T>,
   fallback?: () => Selector<T>,
 ): HTMLElement | null => {
@@ -15,7 +15,7 @@ const getElement = <T extends HTMLElement>(
   return getElement<T>(document.querySelector<T>(selector) as T);
 };
 
-const getElements = <T extends HTMLElement>(
+const getElements = <T extends HTMLElement = HTMLElement>(
   selector?: SelectorMultiple<T>,
   fallback?: () => SelectorMultiple<T>,
 ): T[] => {
