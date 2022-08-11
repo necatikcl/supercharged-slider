@@ -121,7 +121,16 @@ const createSlider = ({
     runSlideChangeHooks,
     slideTo: (index2, silent = false) => {
       const max = instance.slides.length - instance.slidesPerView;
-      if (index2 > max || index2 < 0) {
+      if (index2 > max) {
+        instance.slideTo(max);
+        return;
+      }
+      if (index2 < 0) {
+        instance.slideTo(0);
+        return;
+      }
+      if (index2 !== max && !Number.isInteger(index2)) {
+        instance.slideTo(Math.round(index2));
         return;
       }
       if (!silent) {
@@ -265,10 +274,13 @@ const touch = () => ({
     slider.onCleanUp(onCleanUp);
   }
 });
-const getActiveSlides = (slider) => slider.slides.slice(
-  slider.activeView,
-  slider.activeView + slider.slidesPerView
-);
+const getActiveSlides = (slider) => {
+  const activeView = Math.round(slider.activeView);
+  return slider.slides.slice(
+    activeView,
+    activeView + Math.floor(slider.slidesPerView)
+  );
+};
 const activeClass = (activeClassName = "s-slide-active") => ({
   name: "activeClass",
   callback: (slider) => {
@@ -281,11 +293,8 @@ const activeClass = (activeClassName = "s-slide-active") => ({
       activeSlides.forEach((slide) => slide.classList.add(activeClassName));
     };
     handleSlideChange();
-    const onSlideChange = () => {
-      handleSlideChange();
-      slider.removeSlideChangeHook(onSlideChange);
-    };
-    slider.onSlideChange(onSlideChange);
+    slider.onCleanUp(() => slider.removeSlideChangeHook(handleSlideChange));
+    slider.onSlideChange(handleSlideChange);
   }
 });
 const vertical = () => ({
@@ -337,7 +346,6 @@ const lazyload = () => ({
   callback: (slider) => {
     const onSlideChange = (newSlider) => {
       loadImages(newSlider);
-      slider.removeSlideChangeHook(onSlideChange);
     };
     slider.onSlideChange(onSlideChange);
     slider.onCleanUp(() => slider.removeSlideChangeHook(onSlideChange));
@@ -360,7 +368,6 @@ const autoplay = (props) => ({
     start();
     const onCleanUp = () => {
       clearTimeout(timeout);
-      slider.removeSlideChangeHook(start);
       slider.removeCleanUpHook(onCleanUp);
     };
     slider.onCleanUp(onCleanUp);
@@ -400,7 +407,7 @@ const navigation = (props) => ({
         }
       }
       if (nextElement) {
-        if (newSlider.activeView + newSlider.slidesPerView - 1 >= newSlider.slides.length) {
+        if (Math.round(newSlider.activeView) + Math.floor(newSlider.slidesPerView) - 1 >= newSlider.slides.length) {
           disableElement(nextElement);
         } else {
           enableElement(nextElement);

@@ -45,7 +45,14 @@ const navigation = (props: Props): Middleware => ({
       }
 
       if (nextElement) {
-        if (newSlider.activeView + newSlider.slidesPerView - 1 >= newSlider.slides.length) {
+        console.log({
+          activeView: newSlider.activeView,
+          slidesPerView: newSlider.slidesPerView,
+        });
+        if (
+          newSlider.activeView + newSlider.slidesPerView
+          >= newSlider.slides.length
+        ) {
           disableElement(nextElement);
         } else {
           enableElement(nextElement);

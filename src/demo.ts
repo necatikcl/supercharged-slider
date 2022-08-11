@@ -24,10 +24,7 @@ const instance2 = createSlider({
     touch(),
     spaceBetween(16),
     slidesPerView(6),
-    navigation({
-      prev: '.s-slider-2 .s-navigation-button-prev',
-      next: '.s-slider-2 .s-navigation-button-next',
-    }),
+
     breakpoints({
       768: [slidesPerView(1)],
     }),
@@ -36,7 +33,10 @@ const instance2 = createSlider({
 
 const instance3 = createSlider({
   element: '.s-slider-3',
-  middlewares: [slidesPerView(3.5), activeClass()],
+  middlewares: [slidesPerView(2), activeClass(), navigation({
+    prev: '.s-slider-2 .s-navigation-button-prev',
+    next: '.s-slider-2 .s-navigation-button-next',
+  })],
 });
 
 const instance4 = createSlider({
