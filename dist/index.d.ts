@@ -7,5 +7,6 @@ import activeClass from './middlewares/activeClass';
 import vertical from './middlewares/vertical';
 import lazyload from './middlewares/lazyload';
 import autoplay from './middlewares/autoplay';
+import navigation from './middlewares/navigation';
 export * from './types';
-export { createSlider, breakpoints, slidesPerView, spaceBetween, touch, activeClass, vertical, lazyload, autoplay, };
+export { createSlider, breakpoints, slidesPerView, spaceBetween, touch, activeClass, vertical, lazyload, navigation, autoplay, };

@@ -9,6 +9,7 @@ import activeClass from './middlewares/activeClass';
 import vertical from './middlewares/vertical';
 import lazyload from './middlewares/lazyload';
 import autoplay from './middlewares/autoplay';
+import navigation from './middlewares/navigation';
 
 export * from './types';
 
@@ -21,5 +22,6 @@ export {
   activeClass,
   vertical,
   lazyload,
+  navigation,
   autoplay,
 };

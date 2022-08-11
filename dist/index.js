@@ -367,4 +367,48 @@ const autoplay = (props) => ({
     slider.onSlideChange(start);
   }
 });
-export { activeClass, autoplay, breakpoints, createSlider, lazyload, slidesPerView, spaceBetween, touch, vertical };
+const disabledItems = /* @__PURE__ */ new Map();
+const disableElement = (element) => {
+  if (disabledItems.has(element))
+    return;
+  disabledItems.set(element, true);
+  element.setAttribute("disabled", "disabled");
+};
+const enableElement = (element) => {
+  if (!disabledItems.has(element))
+    return;
+  disabledItems.delete(element);
+  element.removeAttribute("disabled");
+};
+const navigation = (props) => ({
+  name: "navigation",
+  callback: (slider) => {
+    const prevElement = getElement(props.prev);
+    const nextElement = getElement(props.next);
+    prevElement == null ? void 0 : prevElement.addEventListener("click", slider.prev);
+    nextElement == null ? void 0 : nextElement.addEventListener("click", slider.next);
+    slider.onCleanUp(() => {
+      prevElement == null ? void 0 : prevElement.removeEventListener("click", slider.prev);
+      nextElement == null ? void 0 : nextElement.removeEventListener("click", slider.next);
+    });
+    const onSlideChange = (newSlider) => {
+      if (prevElement) {
+        if (newSlider.activeView === 0) {
+          disableElement(prevElement);
+        } else {
+          enableElement(prevElement);
+        }
+      }
+      if (nextElement) {
+        if (newSlider.activeView + newSlider.slidesPerView >= newSlider.slides.length) {
+          disableElement(nextElement);
+        } else {
+          enableElement(nextElement);
+        }
+      }
+    };
+    onSlideChange(slider);
+    slider.onSlideChange(onSlideChange);
+  }
+});
+export { activeClass, autoplay, breakpoints, createSlider, lazyload, navigation, slidesPerView, spaceBetween, touch, vertical };
