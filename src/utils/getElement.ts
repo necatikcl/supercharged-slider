@@ -1,5 +1,5 @@
-export type Selector = string | HTMLElement | null;
-export type SelectorMultiple = string | HTMLElement[] | NodeList | null;
+export type Selector<T = HTMLElement> = string | T | null;
+export type SelectorMultiple<T = HTMLElement> = string | T[] | NodeList | null;
 
 const getElement = (selector?: Selector, fallback?: () => Selector): HTMLElement | null => {
   if (!selector) {
@@ -12,17 +12,17 @@ const getElement = (selector?: Selector, fallback?: () => Selector): HTMLElement
   return getElement(document.querySelector(selector) as HTMLElement);
 };
 
-const getElements = (
-  selector?: SelectorMultiple,
-  fallback?: () => SelectorMultiple,
-): HTMLElement[] => {
+const getElements = <T = HTMLElement>(
+  selector?: SelectorMultiple<T>,
+  fallback?: () => SelectorMultiple<T>,
+): T[] => {
   if (!selector) {
-    if (fallback) return getElements(fallback());
+    if (fallback) return getElements<T>(fallback());
     return [];
   }
 
   if (selector instanceof NodeList) {
-    return [...selector] as HTMLElement[];
+    return [...selector] as T[];
   }
 
   if (Array.isArray(selector)) return selector;
