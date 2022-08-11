@@ -7,6 +7,7 @@ import spaceBetween from './middlewares/spaceBetween';
 import touch from './middlewares/touch';
 import activeClass from './middlewares/activeClass';
 import vertical from './middlewares/vertical';
+import lazyload from './middlewares/lazyload';
 import autoplay from './middlewares/autoplay';
 
 export * from './types';
@@ -19,5 +20,6 @@ export {
   touch,
   activeClass,
   vertical,
+  lazyload,
   autoplay,
 };

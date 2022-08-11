@@ -315,6 +315,34 @@ const vertical = () => ({
     };
   }
 });
+const loadImage = (img) => {
+  const src = img.getAttribute("data-src");
+  if (!src)
+    return;
+  img.removeAttribute("data-src");
+  img.src = src;
+};
+const loadImages = (newSlider) => {
+  const slides = newSlider.slides.slice(
+    newSlider.activeView,
+    newSlider.activeView + newSlider.slidesPerView
+  );
+  const images = slides.flatMap(
+    (slide) => getElements(slide.querySelectorAll("img"))
+  );
+  images.forEach(loadImage);
+};
+const lazyload = () => ({
+  name: "lazyload",
+  callback: (slider) => {
+    const onSlideChange = (newSlider) => {
+      loadImages(newSlider);
+      slider.removeSlideChangeHook(onSlideChange);
+    };
+    slider.onSlideChange(onSlideChange);
+    slider.onCleanUp(() => slider.removeSlideChangeHook(onSlideChange));
+  }
+});
 const autoplay = (props) => ({
   name: "autoplay",
   callback: (slider) => {
@@ -339,4 +367,4 @@ const autoplay = (props) => ({
     slider.onSlideChange(start);
   }
 });
-export { activeClass, autoplay, breakpoints, createSlider, slidesPerView, spaceBetween, touch, vertical };
+export { activeClass, autoplay, breakpoints, createSlider, lazyload, slidesPerView, spaceBetween, touch, vertical };
