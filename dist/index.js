@@ -400,7 +400,7 @@ const navigation = (props) => ({
         }
       }
       if (nextElement) {
-        if (newSlider.activeView + newSlider.slidesPerView >= newSlider.slides.length) {
+        if (newSlider.activeView + newSlider.slidesPerView - 1 >= newSlider.slides.length) {
           disableElement(nextElement);
         } else {
           enableElement(nextElement);
@@ -408,7 +408,12 @@ const navigation = (props) => ({
       }
     };
     onSlideChange(slider);
+    const onCleanUp = () => {
+      slider.removeSlideChangeHook(onSlideChange);
+      slider.removeCleanUpHook(onCleanUp);
+    };
     slider.onSlideChange(onSlideChange);
+    slider.onCleanUp(onCleanUp);
   }
 });
 export { activeClass, autoplay, breakpoints, createSlider, lazyload, navigation, slidesPerView, spaceBetween, touch, vertical };

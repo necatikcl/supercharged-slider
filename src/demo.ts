@@ -36,7 +36,7 @@ const instance2 = createSlider({
 
 const instance3 = createSlider({
   element: '.s-slider-3',
-  middlewares: [slidesPerView(3), activeClass()],
+  middlewares: [slidesPerView(3.5), activeClass()],
 });
 
 const instance4 = createSlider({

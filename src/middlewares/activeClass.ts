@@ -1,9 +1,13 @@
 import { Middleware, Slider } from '~/types';
 
-const getActiveSlides = (slider: Slider) => slider.slides.slice(
-  slider.activeView,
-  slider.activeView + slider.slidesPerView,
-);
+const getActiveSlides = (slider: Slider) => {
+  const activeView = Math.round(slider.activeView);
+
+  return slider.slides.slice(
+    activeView,
+    activeView + Math.floor(slider.slidesPerView),
+  );
+};
 
 const activeClass = (activeClassName = 's-slide-active'): Middleware => ({
   name: 'activeClass',
@@ -22,13 +26,8 @@ const activeClass = (activeClassName = 's-slide-active'): Middleware => ({
 
     handleSlideChange();
 
-    const onSlideChange = () => {
-      handleSlideChange();
-
-      slider.removeSlideChangeHook(onSlideChange);
-    };
-
-    slider.onSlideChange(onSlideChange);
+    slider.onCleanUp(() => slider.removeSlideChangeHook(handleSlideChange));
+    slider.onSlideChange(handleSlideChange);
   },
 });
 

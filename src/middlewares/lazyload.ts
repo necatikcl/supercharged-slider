@@ -28,7 +28,6 @@ const lazyload = (): Middleware => ({
   callback: (slider) => {
     const onSlideChange = (newSlider: Slider) => {
       loadImages(newSlider);
-      slider.removeSlideChangeHook(onSlideChange);
     };
 
     slider.onSlideChange(onSlideChange);

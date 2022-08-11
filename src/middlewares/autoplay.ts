@@ -25,7 +25,6 @@ const autoplay = (props: Props): Middleware => ({
 
     const onCleanUp = () => {
       clearTimeout(timeout);
-      slider.removeSlideChangeHook(start);
       slider.removeCleanUpHook(onCleanUp);
     };
 

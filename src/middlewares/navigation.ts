@@ -45,7 +45,7 @@ const navigation = (props: Props): Middleware => ({
       }
 
       if (nextElement) {
-        if (newSlider.activeView + newSlider.slidesPerView >= newSlider.slides.length) {
+        if (newSlider.activeView + newSlider.slidesPerView - 1 >= newSlider.slides.length) {
           disableElement(nextElement);
         } else {
           enableElement(nextElement);
@@ -55,7 +55,13 @@ const navigation = (props: Props): Middleware => ({
 
     onSlideChange(slider);
 
+    const onCleanUp = () => {
+      slider.removeSlideChangeHook(onSlideChange);
+      slider.removeCleanUpHook(onCleanUp);
+    };
+
     slider.onSlideChange(onSlideChange);
+    slider.onCleanUp(onCleanUp);
   },
 });
 

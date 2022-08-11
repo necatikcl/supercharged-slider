@@ -77,7 +77,18 @@ const createSlider = ({
     slideTo: (index, silent = false) => {
       const max = instance.slides.length - instance.slidesPerView;
 
-      if (index > max || index < 0) {
+      if (index > max) {
+        instance.slideTo(max);
+        return;
+      }
+
+      if (index < 0) {
+        instance.slideTo(0);
+        return;
+      }
+
+      if (index !== max && !Number.isInteger(index)) {
+        instance.slideTo(Math.round(index));
         return;
       }
 
