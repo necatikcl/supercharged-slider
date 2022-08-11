@@ -1,6 +1,8 @@
-declare const useHooks: <T extends any[]>() => {
-    addHook: (hook: (...args: T) => void) => number;
-    runHooks: (...args: T) => void;
-    hooks: ((...args: T) => void)[];
+import type { Hook } from '..';
+declare const useHooks: <T extends unknown>() => {
+    addHook: (hook: Hook<T>) => number;
+    runHooks: (props: T) => void;
+    removeHook: (hook: Hook<T>) => void;
+    hooks: Hook<T>[];
 };
 export default useHooks;

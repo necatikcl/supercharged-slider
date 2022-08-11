@@ -96,6 +96,19 @@ const createSlider = ({
     },
     next: () => instance.slideTo(instance.activeView + 1),
     prev: () => instance.slideTo(instance.activeView - 1),
+    render: () => {
+      runCleanUpHooks();
+
+      instance.slideWidth = instance.element.clientWidth;
+      instance.slideStyles.width = `${instance.slideWidth}px`;
+      instance.spaceBetween = 0;
+
+      runMiddlewares(middlewares, instance);
+
+      instance.updateSlideStyles();
+
+      instance.slideTo(instance.activeView, true);
+    },
     updateSlideStyles: () => slides.forEach(
       (slide) => Object.assign(slide.style, instance.slideStyles),
     ),
@@ -105,22 +118,8 @@ const createSlider = ({
     },
   };
 
-  const processMiddlewares = () => {
-    runCleanUpHooks();
-
-    instance.slideWidth = instance.element.clientWidth;
-    instance.slideStyles.width = `${instance.slideWidth}px`;
-    instance.spaceBetween = 0;
-
-    runMiddlewares(middlewares, instance);
-
-    instance.updateSlideStyles();
-
-    instance.slideTo(instance.activeView, true);
-  };
-
-  processMiddlewares();
-  window.addEventListener('resize', debounce(processMiddlewares, 300));
+  instance.render();
+  window.addEventListener('resize', debounce(instance.render, 300));
 
   return instance;
 };

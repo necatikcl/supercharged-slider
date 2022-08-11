@@ -14,6 +14,7 @@ export interface Slider {
   middlewares: Middleware[],
   next: () => void
   prev: () => void
+  render: () => void
   slideTo: (index: number, silent?: boolean) => void
   updateSlideStyles: () => void
   scrollWrapperTo: (y: number) => void,

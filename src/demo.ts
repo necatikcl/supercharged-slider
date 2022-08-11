@@ -8,6 +8,7 @@ import spaceBetween from './middlewares/spaceBetween';
 import touch from './middlewares/touch';
 import activeClass from './middlewares/activeClass';
 import vertical from './middlewares/vertical';
+import autoplay from './middlewares/autoplay';
 
 const instance1 = createSlider({
   element: '.s-slider-1',
@@ -23,6 +24,7 @@ const instance2 = createSlider({
     touch(),
     spaceBetween(16),
     slidesPerView(6),
+    autoplay({ interval: 1000 }),
     breakpoints({
       768: [slidesPerView(1)],
     }),

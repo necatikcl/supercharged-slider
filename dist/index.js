@@ -52,10 +52,16 @@ const runMiddlewares = (middlewares, slider) => {
 const useHooks = () => {
   const hooks = [];
   const addHook = (hook) => hooks.push(hook);
-  const runHooks = (...args) => hooks.forEach((hook) => hook(...args));
+  const removeHook = (hook) => {
+    const index2 = hooks.indexOf(hook);
+    if (index2 > -1)
+      hooks.splice(index2, 1);
+  };
+  const runHooks = (props) => hooks.forEach((hook) => hook(props));
   return {
     addHook,
     runHooks,
+    removeHook,
     hooks
   };
 };
@@ -77,8 +83,21 @@ const createSlider = ({
   if (!slides) {
     throw new Error("[supercharged-slider] Slides are not found");
   }
-  const { addHook: addSlideChangeHook, runHooks: runSlideChangeHooks } = useHooks();
-  const { addHook: addBeforeSlideChangeHook, runHooks: runBeforeSlideChangeHooks } = useHooks();
+  const {
+    addHook: addSlideChangeHook,
+    removeHook: removeSlideChangeHook,
+    runHooks: runSlideChangeHooks
+  } = useHooks();
+  const {
+    addHook: addBeforeSlideChangeHook,
+    removeHook: removeBeforeSlideChangeHook,
+    runHooks: runBeforeSlideChangeHooks
+  } = useHooks();
+  const {
+    addHook: addCleanUpHook,
+    runHooks: runCleanUpHooks,
+    removeHook: removeCleanUpHook
+  } = useHooks();
   if (onSlideChange)
     addSlideChangeHook(onSlideChange);
   const instance = {
@@ -92,23 +111,40 @@ const createSlider = ({
     spaceBetween: 0,
     middlewares,
     slideStyles: {},
+    onCleanUp: addCleanUpHook,
     onSlideChange: addSlideChangeHook,
     onBeforeSlideChange: addBeforeSlideChangeHook,
+    removeCleanUpHook,
+    removeSlideChangeHook,
+    removeBeforeSlideChangeHook,
     runBeforeSlideChangeHooks,
     runSlideChangeHooks,
-    slideTo: (index2) => {
+    slideTo: (index2, silent = false) => {
       const max = instance.slides.length - instance.slidesPerView;
       if (index2 > max || index2 < 0) {
         return;
       }
-      runBeforeSlideChangeHooks(instance);
+      if (!silent) {
+        runBeforeSlideChangeHooks(instance);
+      }
       const x = getSlideX(index2, instance);
       instance.scrollWrapperTo(x);
       instance.activeView = index2;
-      runSlideChangeHooks(instance);
+      if (!silent) {
+        runSlideChangeHooks(instance);
+      }
     },
     next: () => instance.slideTo(instance.activeView + 1),
     prev: () => instance.slideTo(instance.activeView - 1),
+    render: () => {
+      runCleanUpHooks();
+      instance.slideWidth = instance.element.clientWidth;
+      instance.slideStyles.width = `${instance.slideWidth}px`;
+      instance.spaceBetween = 0;
+      runMiddlewares(middlewares, instance);
+      instance.updateSlideStyles();
+      instance.slideTo(instance.activeView, true);
+    },
     updateSlideStyles: () => slides.forEach(
       (slide) => Object.assign(slide.style, instance.slideStyles)
     ),
@@ -117,14 +153,8 @@ const createSlider = ({
       wrapper.style.transform = `translate3d(-${x}px, 0, 0)`;
     }
   };
-  const processMiddlewares = () => {
-    instance.slideWidth = instance.element.clientWidth;
-    instance.spaceBetween = 0;
-    runMiddlewares(middlewares, instance);
-    instance.updateSlideStyles();
-  };
-  processMiddlewares();
-  window.addEventListener("resize", debounce(processMiddlewares, 300));
+  instance.render();
+  window.addEventListener("resize", debounce(instance.render, 300));
   return instance;
 };
 const middlewaresToRerun = ["slidesPerView", "spaceBetween"];
@@ -149,6 +179,7 @@ const breakpoints = (props) => ({
     });
     if (!currentBreakpoint)
       return;
+    console.log({ middlewares, currentBreakpoint });
     runMiddlewares(Object.values(middlewares), slider);
   }
 });
@@ -198,16 +229,15 @@ const touch = () => ({
       lastWrapperPosition = Math.max(Math.min(newPosition, threshold), 0);
       slider.scrollWrapperTo(lastWrapperPosition);
     };
-    document.addEventListener("mousedown", (e) => {
-      const valid = isTargetValid(e);
-      if (!valid)
+    const onMouseDown = (e) => {
+      if (!isTargetValid(e))
         return;
       isDragging = true;
       wrapperPositionBeforeDrag = slider.wrapperPosition;
       slider.wrapper.style.transitionDuration = "0ms";
       document.addEventListener("mousemove", onMouseMove);
-    });
-    document.addEventListener("mouseup", () => {
+    };
+    const onMouseUp = () => {
       if (!isDragging)
         return;
       const rectKey = isVertical() ? "slideHeight" : "slideWidth";
@@ -221,8 +251,20 @@ const touch = () => ({
       isDragging = false;
       slider.wrapper.style.transitionDuration = "";
       document.removeEventListener("mousemove", onMouseMove);
-    });
-    slider.onSlideChange(() => console.log("slidec"));
+    };
+    document.addEventListener("mousedown", onMouseDown);
+    document.addEventListener("mouseup", onMouseUp);
+    const onCleanUp = () => {
+      console.log("cleanUp");
+      isDragging = false;
+      wrapperPositionBeforeDrag = 0;
+      lastCursorPosition = 0;
+      lastWrapperPosition = 0;
+      document.removeEventListener("mousedown", onMouseDown);
+      document.removeEventListener("mouseup", onMouseUp);
+      slider.removeCleanUpHook(onCleanUp);
+    };
+    slider.onCleanUp(onCleanUp);
   }
 });
 const getActiveSlides = (slider) => slider.slides.slice(
@@ -241,7 +283,11 @@ const activeClass = (activeClassName = "s-slide-active") => ({
       activeSlides.forEach((slide) => slide.classList.add(activeClassName));
     };
     handleSlideChange();
-    slider.onSlideChange(handleSlideChange);
+    const onSlideChange = () => {
+      handleSlideChange();
+      slider.removeSlideChangeHook(onSlideChange);
+    };
+    slider.onSlideChange(onSlideChange);
   }
 });
 const vertical = () => ({
