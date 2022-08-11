@@ -1,4 +1,4 @@
-export declare type Hook<T extends unknown> = (props?: T) => void;
+export declare type Hook<T extends unknown> = (props: T) => void;
 export interface Slider {
     element: HTMLElement;
     wrapper: HTMLElement;

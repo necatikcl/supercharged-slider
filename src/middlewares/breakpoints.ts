@@ -37,8 +37,6 @@ const breakpoints = (props: Props): Middleware => ({
 
     if (!currentBreakpoint) return;
 
-    console.log({ middlewares, currentBreakpoint });
-
     runMiddlewares(Object.values(middlewares), slider);
   },
 });

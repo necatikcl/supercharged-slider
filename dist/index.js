@@ -179,7 +179,6 @@ const breakpoints = (props) => ({
     });
     if (!currentBreakpoint)
       return;
-    console.log({ middlewares, currentBreakpoint });
     runMiddlewares(Object.values(middlewares), slider);
   }
 });
@@ -209,7 +208,7 @@ const touch = () => ({
   name: "touch",
   callback: (slider) => {
     const isVertical = () => slider.direction === "vertical";
-    const isTargetValid = (e) => e.composedPath().includes(slider.element);
+    const isTargetValid = (e) => e.composedPath().includes(slider.wrapper);
     let isDragging = false;
     let wrapperPositionBeforeDrag = 0;
     let lastCursorPosition = 0;
@@ -255,7 +254,6 @@ const touch = () => ({
     document.addEventListener("mousedown", onMouseDown);
     document.addEventListener("mouseup", onMouseUp);
     const onCleanUp = () => {
-      console.log("cleanUp");
       isDragging = false;
       wrapperPositionBeforeDrag = 0;
       lastCursorPosition = 0;

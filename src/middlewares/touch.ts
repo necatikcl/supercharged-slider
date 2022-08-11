@@ -5,7 +5,7 @@ const touch = (): Middleware => ({
   name: 'touch',
   callback: (slider) => {
     const isVertical = () => slider.direction === 'vertical';
-    const isTargetValid = (e: MouseEvent) => e.composedPath().includes(slider.element);
+    const isTargetValid = (e: MouseEvent) => e.composedPath().includes(slider.wrapper);
 
     let isDragging = false;
     let wrapperPositionBeforeDrag = 0;
@@ -63,7 +63,6 @@ const touch = (): Middleware => ({
     document.addEventListener('mouseup', onMouseUp);
 
     const onCleanUp = () => {
-      console.log('cleanUp');
       isDragging = false;
       wrapperPositionBeforeDrag = 0;
       lastCursorPosition = 0;
