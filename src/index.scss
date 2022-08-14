@@ -1,6 +1,12 @@
 .s-slider {
   overflow: hidden;
 
+  &-touchable {
+    img {
+      user-select: none;
+    }
+  }
+
   &-vertical {
     .s-wrapper {
       flex-direction: column;

@@ -1,9 +1,12 @@
 import { Middleware } from '~/types';
+import { getElements } from '~/utils/getElement';
 
 // TODO: TOUCH HALA PROBLEMLİ, MOBİLDE!
 const touch = (): Middleware => ({
   name: 'touch',
   callback: (slider) => {
+    slider.element.classList.add('s-slider-touchable');
+
     const isVertical = () => slider.direction === 'vertical';
     const isTargetValid = (e: MouseEvent) => e.composedPath().includes(slider.wrapper);
 
@@ -80,6 +83,12 @@ const touch = (): Middleware => ({
 
     document.addEventListener('mousedown', onMouseDown);
     document.addEventListener('mouseup', onMouseUp);
+
+    slider.slides.forEach((slide) => {
+      getElements(slide.querySelectorAll('img')).forEach((img) => {
+        img.setAttribute('draggable', 'false');
+      });
+    });
 
     const onCleanUp = () => {
       isDragging = false;

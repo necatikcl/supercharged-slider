@@ -13,7 +13,6 @@ import navigation from './middlewares/navigation';
 const instance1 = createSlider({
   element: '.s-slider-1',
   middlewares: [
-    touch(),
     vertical(),
   ],
 });
@@ -21,7 +20,6 @@ const instance1 = createSlider({
 const instance2 = createSlider({
   element: '.s-slider-2',
   middlewares: [
-    touch(),
     spaceBetween(16),
     slidesPerView(6),
 
@@ -33,7 +31,7 @@ const instance2 = createSlider({
 
 const instance3 = createSlider({
   element: '.s-slider-3',
-  middlewares: [slidesPerView(2), lazyload(), activeClass(), navigation({
+  middlewares: [slidesPerView(2), lazyload(), touch(), activeClass(), navigation({
     prev: '.s-slider-2 .s-navigation-button-prev',
     next: '.s-slider-2 .s-navigation-button-next',
   })],
