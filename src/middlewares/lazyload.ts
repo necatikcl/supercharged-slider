@@ -19,11 +19,13 @@ const loadImage = (image: HTMLImageElement) => {
   return true;
 };
 
-const loadImages = (newSlider: Slider, onLoad: OnLoad) => {
-  const slides = newSlider.slides
-    .slice(
-      newSlider.activeView, newSlider.activeView + newSlider.slidesPerView,
-    );
+const loadImages = (slider: Slider, onLoad: OnLoad) => {
+  const start = Math.max(slider.activeView - 1, 0);
+
+  let end = slider.activeView + slider.slidesPerView;
+  end = Math.min(end + 1, slider.slides.length);
+
+  const slides = slider.slides.slice(start, end);
 
   const images = slides.flatMap(
     (slide) => getElements<HTMLImageElement>(slide.querySelectorAll('img')),
@@ -31,16 +33,14 @@ const loadImages = (newSlider: Slider, onLoad: OnLoad) => {
 
   images.forEach((image) => {
     const loaded = loadImage(image);
-    if (loaded) onLoad({ slider: newSlider, image });
+    if (loaded) onLoad({ slider, image });
   });
 };
 
-const lazyload = (onLoad: OnLoad): Middleware => ({
+const lazyload = (onLoad: OnLoad = () => { }): Middleware => ({
   name: 'lazyload',
   callback: (slider) => {
-    const onSlideChange = (newSlider: Slider) => {
-      loadImages(newSlider, onLoad);
-    };
+    const onSlideChange = (newSlider: Slider) => loadImages(newSlider, onLoad);
 
     const onCleanUp = () => {
       slider.removeSlideChangeHook(onSlideChange);

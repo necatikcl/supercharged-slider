@@ -45,10 +45,6 @@ const navigation = (props: Props): Middleware => ({
       }
 
       if (nextElement) {
-        console.log({
-          activeView: newSlider.activeView,
-          slidesPerView: newSlider.slidesPerView,
-        });
         if (
           newSlider.activeView + newSlider.slidesPerView
           >= newSlider.slides.length

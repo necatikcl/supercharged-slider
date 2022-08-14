@@ -1,6 +1,6 @@
 import './demo.scss';
 
-import { createSlider } from '.';
+import { createSlider, lazyload } from '.';
 
 import breakpoints from './middlewares/breakpoints';
 import slidesPerView from './middlewares/slidesPerView';
@@ -33,7 +33,7 @@ const instance2 = createSlider({
 
 const instance3 = createSlider({
   element: '.s-slider-3',
-  middlewares: [slidesPerView(2), activeClass(), navigation({
+  middlewares: [slidesPerView(2), lazyload(), activeClass(), navigation({
     prev: '.s-slider-2 .s-navigation-button-prev',
     next: '.s-slider-2 .s-navigation-button-next',
   })],

@@ -4,5 +4,5 @@ interface Props {
     image: HTMLImageElement;
 }
 declare type OnLoad = (props: Props) => void;
-declare const lazyload: (onLoad: OnLoad) => Middleware;
+declare const lazyload: (onLoad?: OnLoad) => Middleware;
 export default lazyload;

@@ -345,26 +345,25 @@ const loadImage = (image) => {
   image.src = src;
   return true;
 };
-const loadImages = (newSlider, onLoad) => {
-  const slides = newSlider.slides.slice(
-    newSlider.activeView,
-    newSlider.activeView + newSlider.slidesPerView
-  );
+const loadImages = (slider, onLoad) => {
+  const start = Math.max(slider.activeView - 1, 0);
+  let end = slider.activeView + slider.slidesPerView;
+  end = Math.min(end + 1, slider.slides.length);
+  const slides = slider.slides.slice(start, end);
   const images = slides.flatMap(
     (slide) => getElements(slide.querySelectorAll("img"))
   );
   images.forEach((image) => {
     const loaded = loadImage(image);
     if (loaded)
-      onLoad({ slider: newSlider, image });
+      onLoad({ slider, image });
   });
 };
-const lazyload = (onLoad) => ({
+const lazyload = (onLoad = () => {
+}) => ({
   name: "lazyload",
   callback: (slider) => {
-    const onSlideChange = (newSlider) => {
-      loadImages(newSlider, onLoad);
-    };
+    const onSlideChange = (newSlider) => loadImages(newSlider, onLoad);
     const onCleanUp = () => {
       slider.removeSlideChangeHook(onSlideChange);
       slider.removeCleanUpHook(onCleanUp);
@@ -430,10 +429,6 @@ const navigation = (props) => ({
         }
       }
       if (nextElement) {
-        console.log({
-          activeView: newSlider.activeView,
-          slidesPerView: newSlider.slidesPerView
-        });
         if (newSlider.activeView + newSlider.slidesPerView >= newSlider.slides.length) {
           disableElement(nextElement);
         } else {
