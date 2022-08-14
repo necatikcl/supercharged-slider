@@ -1,7 +1,7 @@
 import { Middleware, Slider } from '../types';
 interface Props {
     slider: Slider;
-    image: HTMLImageElement;
+    indexesLoaded: number[];
 }
 declare type OnLoad = (props: Props) => void;
 declare const lazyload: (onLoad?: OnLoad) => Middleware;
