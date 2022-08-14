@@ -3,7 +3,7 @@ import { getElements } from '~/utils/getElement';
 
 interface Props {
   slider: Slider,
-  image: HTMLImageElement
+  indexesLoaded: number[]
 }
 
 type OnLoad = (props: Props) => void;
@@ -19,28 +19,36 @@ const loadImage = (image: HTMLImageElement) => {
   return true;
 };
 
-const loadImages = (slider: Slider, onLoad: OnLoad) => {
-  const start = Math.max(slider.activeView - 1, 0);
-
-  let end = slider.activeView + slider.slidesPerView;
-  end = Math.min(end + 1, slider.slides.length);
-
-  const slides = slider.slides.slice(start, end);
-
-  const images = slides.flatMap(
-    (slide) => getElements<HTMLImageElement>(slide.querySelectorAll('img')),
-  );
-
-  images.forEach((image) => {
-    const loaded = loadImage(image);
-    if (loaded) onLoad({ slider, image });
-  });
-};
-
 const lazyload = (onLoad: OnLoad = () => { }): Middleware => ({
   name: 'lazyload',
   callback: (slider) => {
-    const onSlideChange = (newSlider: Slider) => loadImages(newSlider, onLoad);
+    let indexesLoaded: number[] = [];
+
+    const loadImages = (newSlider: Slider) => {
+      const start = Math.max(newSlider.activeView - 1, 0);
+
+      let end = newSlider.activeView + newSlider.slidesPerView;
+      end = Math.min(end + 1, newSlider.slides.length);
+
+      const slides = newSlider.slides.slice(start, end);
+
+      for (let i = start; i < end; i += 1) {
+        indexesLoaded.push(i);
+      }
+
+      indexesLoaded = [...new Set(indexesLoaded)];
+
+      const images = slides.flatMap(
+        (slide) => getElements<HTMLImageElement>(slide.querySelectorAll('img')),
+      );
+
+      images.forEach((image) => {
+        const loaded = loadImage(image);
+        if (loaded) onLoad({ slider: newSlider, indexesLoaded });
+      });
+    };
+
+    const onSlideChange = (newSlider: Slider) => loadImages(newSlider);
 
     const onCleanUp = () => {
       slider.removeSlideChangeHook(onSlideChange);
