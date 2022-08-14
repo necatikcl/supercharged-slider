@@ -219,6 +219,7 @@ const touch = () => ({
     const isVertical = () => slider.direction === "vertical";
     const isTargetValid = (e) => e.composedPath().includes(slider.wrapper);
     let isDragging = false;
+    let isSelectionDisabled = false;
     let wrapperPositionBeforeDrag = 0;
     let lastCursorPosition = 0;
     let lastWrapperPosition = 0;
@@ -236,18 +237,26 @@ const touch = () => ({
       lastCursorPosition = mousePosition;
       lastWrapperPosition = Math.max(Math.min(newPosition, threshold), 0);
       slider.scrollWrapperTo(lastWrapperPosition);
+      if (isSelectionDisabled)
+        return;
+      slider.wrapper.style.pointerEvents = "none";
+      slider.wrapper.style.transitionDuration = "0ms";
+      slider.slides.forEach((slide) => {
+        slide.style.pointerEvents = "none";
+      });
+      isSelectionDisabled = true;
     };
     const onMouseDown = (e) => {
       if (!isTargetValid(e))
         return;
       isDragging = true;
       wrapperPositionBeforeDrag = slider.wrapperPosition;
-      slider.wrapper.style.transitionDuration = "0ms";
       document.addEventListener("mousemove", onMouseMove);
     };
     const onMouseUp = () => {
       if (!isDragging)
         return;
+      isSelectionDisabled = false;
       const rectKey = isVertical() ? "slideHeight" : "slideWidth";
       const newIndex = Math.round(lastWrapperPosition / (slider[rectKey] || 0));
       if (slider.activeView !== newIndex) {
@@ -257,6 +266,10 @@ const touch = () => ({
       }
       lastCursorPosition = 0;
       isDragging = false;
+      slider.wrapper.style.pointerEvents = "all";
+      slider.slides.forEach((slide) => {
+        slide.style.pointerEvents = "all";
+      });
       slider.wrapper.style.transitionDuration = "";
       document.removeEventListener("mousemove", onMouseMove);
     };
@@ -324,14 +337,15 @@ const vertical = () => ({
     };
   }
 });
-const loadImage = (img) => {
-  const src = img.getAttribute("data-src");
+const loadImage = (image) => {
+  const src = image.getAttribute("data-src");
   if (!src)
-    return;
-  img.removeAttribute("data-src");
-  img.src = src;
+    return false;
+  image.removeAttribute("data-src");
+  image.src = src;
+  return true;
 };
-const loadImages = (newSlider) => {
+const loadImages = (newSlider, onLoad) => {
   const slides = newSlider.slides.slice(
     newSlider.activeView,
     newSlider.activeView + newSlider.slidesPerView
@@ -339,16 +353,25 @@ const loadImages = (newSlider) => {
   const images = slides.flatMap(
     (slide) => getElements(slide.querySelectorAll("img"))
   );
-  images.forEach(loadImage);
+  images.forEach((image) => {
+    const loaded = loadImage(image);
+    if (loaded)
+      onLoad({ slider: newSlider, image });
+  });
 };
-const lazyload = () => ({
+const lazyload = (onLoad) => ({
   name: "lazyload",
   callback: (slider) => {
     const onSlideChange = (newSlider) => {
-      loadImages(newSlider);
+      loadImages(newSlider, onLoad);
     };
+    const onCleanUp = () => {
+      slider.removeSlideChangeHook(onSlideChange);
+      slider.removeCleanUpHook(onCleanUp);
+    };
+    onSlideChange(slider);
     slider.onSlideChange(onSlideChange);
-    slider.onCleanUp(() => slider.removeSlideChangeHook(onSlideChange));
+    slider.onCleanUp(onCleanUp);
   }
 });
 const autoplay = (props) => ({
@@ -407,7 +430,11 @@ const navigation = (props) => ({
         }
       }
       if (nextElement) {
-        if (Math.round(newSlider.activeView) + Math.floor(newSlider.slidesPerView) - 1 >= newSlider.slides.length) {
+        console.log({
+          activeView: newSlider.activeView,
+          slidesPerView: newSlider.slidesPerView
+        });
+        if (newSlider.activeView + newSlider.slidesPerView >= newSlider.slides.length) {
           disableElement(nextElement);
         } else {
           enableElement(nextElement);

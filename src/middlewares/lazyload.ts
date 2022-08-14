@@ -1,16 +1,25 @@
 import { Middleware, Slider } from '~/types';
 import { getElements } from '~/utils/getElement';
 
-const loadImage = (img: HTMLImageElement) => {
-  const src = img.getAttribute('data-src');
+interface Props {
+  slider: Slider,
+  image: HTMLImageElement
+}
 
-  if (!src) return;
+type OnLoad = (props: Props) => void;
 
-  img.removeAttribute('data-src');
-  img.src = src;
+const loadImage = (image: HTMLImageElement) => {
+  const src = image.getAttribute('data-src');
+
+  if (!src) return false;
+
+  image.removeAttribute('data-src');
+  image.src = src;
+
+  return true;
 };
 
-const loadImages = (newSlider: Slider) => {
+const loadImages = (newSlider: Slider, onLoad: OnLoad) => {
   const slides = newSlider.slides
     .slice(
       newSlider.activeView, newSlider.activeView + newSlider.slidesPerView,
@@ -20,18 +29,28 @@ const loadImages = (newSlider: Slider) => {
     (slide) => getElements<HTMLImageElement>(slide.querySelectorAll('img')),
   );
 
-  images.forEach(loadImage);
+  images.forEach((image) => {
+    const loaded = loadImage(image);
+    if (loaded) onLoad({ slider: newSlider, image });
+  });
 };
 
-const lazyload = (): Middleware => ({
+const lazyload = (onLoad: OnLoad): Middleware => ({
   name: 'lazyload',
   callback: (slider) => {
     const onSlideChange = (newSlider: Slider) => {
-      loadImages(newSlider);
+      loadImages(newSlider, onLoad);
     };
 
+    const onCleanUp = () => {
+      slider.removeSlideChangeHook(onSlideChange);
+      slider.removeCleanUpHook(onCleanUp);
+    };
+
+    onSlideChange(slider);
+
     slider.onSlideChange(onSlideChange);
-    slider.onCleanUp(() => slider.removeSlideChangeHook(onSlideChange));
+    slider.onCleanUp(onCleanUp);
   },
 });
 

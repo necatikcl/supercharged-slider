@@ -8,6 +8,8 @@ const touch = (): Middleware => ({
     const isTargetValid = (e: MouseEvent) => e.composedPath().includes(slider.wrapper);
 
     let isDragging = false;
+    let isSelectionDisabled = false;
+
     let wrapperPositionBeforeDrag = 0;
     let lastCursorPosition = 0;
     let lastWrapperPosition = 0;
@@ -30,6 +32,17 @@ const touch = (): Middleware => ({
       lastWrapperPosition = Math.max(Math.min(newPosition, threshold), 0);
 
       slider.scrollWrapperTo(lastWrapperPosition);
+
+      if (isSelectionDisabled) return;
+
+      slider.wrapper.style.pointerEvents = 'none';
+      slider.wrapper.style.transitionDuration = '0ms';
+
+      slider.slides.forEach((slide) => {
+        slide.style.pointerEvents = 'none';
+      });
+
+      isSelectionDisabled = true;
     };
 
     const onMouseDown = (e: MouseEvent) => {
@@ -38,12 +51,14 @@ const touch = (): Middleware => ({
       isDragging = true;
       wrapperPositionBeforeDrag = slider.wrapperPosition;
 
-      slider.wrapper.style.transitionDuration = '0ms';
       document.addEventListener('mousemove', onMouseMove);
     };
 
     const onMouseUp = () => {
       if (!isDragging) return;
+
+      isSelectionDisabled = false;
+
       const rectKey = isVertical() ? 'slideHeight' : 'slideWidth';
       const newIndex = Math.round(lastWrapperPosition / (slider[rectKey] || 0));
 
@@ -55,7 +70,11 @@ const touch = (): Middleware => ({
 
       lastCursorPosition = 0;
       isDragging = false;
+
+      slider.wrapper.style.pointerEvents = 'all';
+      slider.slides.forEach((slide) => { slide.style.pointerEvents = 'all'; });
       slider.wrapper.style.transitionDuration = '';
+
       document.removeEventListener('mousemove', onMouseMove);
     };
 
