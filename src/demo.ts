@@ -31,7 +31,7 @@ const instance2 = createSlider({
 
 const instance3 = createSlider({
   element: '.s-slider-3',
-  middlewares: [slidesPerView(2), lazyload(), touch(), activeClass(), navigation({
+  middlewares: [slidesPerView(3.25), lazyload(), touch(), activeClass(), navigation({
     prev: '.s-slider-2 .s-navigation-button-prev',
     next: '.s-slider-2 .s-navigation-button-next',
   })],

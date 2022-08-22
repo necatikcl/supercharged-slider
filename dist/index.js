@@ -216,6 +216,7 @@ const spaceBetween = (size) => ({
 const touch = () => ({
   name: "touch",
   callback: (slider) => {
+    slider.element.classList.add("s-slider-touchable");
     const isVertical = () => slider.direction === "vertical";
     const isTargetValid = (e) => e.composedPath().includes(slider.wrapper);
     let isDragging = false;
@@ -275,6 +276,11 @@ const touch = () => ({
     };
     document.addEventListener("mousedown", onMouseDown);
     document.addEventListener("mouseup", onMouseUp);
+    slider.slides.forEach((slide) => {
+      getElements(slide.querySelectorAll("img")).forEach((img) => {
+        img.setAttribute("draggable", "false");
+      });
+    });
     const onCleanUp = () => {
       isDragging = false;
       wrapperPositionBeforeDrag = 0;
