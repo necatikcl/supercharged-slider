@@ -1,78 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+    <link rel="stylesheet" href="src/index.scss" />
+  </head>
 
-  <link rel="stylesheet" href="src/index.scss">
-</head>
+  <body>
+    <button class="s-slider-next">next</button>
+    <button class="s-slider-prev">prev</button>
 
-<body>
-  <button class="s-slider-next">next</button>
-  <button class="s-slider-prev">prev</button>
-
-  <div class="s-slider s-slider-1">
-    <div class="s-wrapper">
-      <div class="s-slide">1</div>
-      <div class="s-slide">2</div>
-      <div class="s-slide">3</div>
-      <div class="s-slide">4</div>
-      <div class="s-slide">5</div>
-    </div>
-  </div>
-
-  <div class="s-slider s-slider-2">
-    <div class="s-wrapper">
-      <div class="s-slide">1</div>
-      <div class="s-slide">2</div>
-      <div class="s-slide">3</div>
-      <div class="s-slide">4</div>
-      <div class="s-slide">5</div>
-      <div class="s-slide">6</div>
-      <div class="s-slide">7</div>
-      <div class="s-slide">8</div>
-    </div>
-    <div class="s-navigation">
-      <button class="s-navigation-button s-navigation-button-prev">Prev</button>
-      <button class="s-navigation-button s-navigation-button-next">Next</button>
-    </div>
-  </div>
-
-  <div class="s-slider s-slider-3">
-    <div class="s-wrapper">
-      <div class="s-slide"><img
-          data-src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/800px-Image_created_with_a_mobile_phone.png">
-      </div>
-      <div class="s-slide"><img
-          data-src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/800px-Image_created_with_a_mobile_phone.png">
+    <div class="s-slider s-slider-1">
+      <div class="s-wrapper">
+        <div class="s-slide">1</div>
+        <div class="s-slide">2</div>
+        <div class="s-slide">3</div>
+        <div class="s-slide">4</div>
+        <div class="s-slide">5</div>
       </div>
     </div>
-  </div>
 
-  <div class="s-slider s-slider-4">
-    <div class="s-wrapper">
-      <div class="s-slide">1</div>
-      <div class="s-slide">2</div>
-      <div class="s-slide">3</div>
-      <div class="s-slide">4</div>
-      <div class="s-slide">5</div>
+    <div class="s-slider s-slider-2">
+      <div class="s-wrapper">
+        <div class="s-slide">1</div>
+        <div class="s-slide">2</div>
+        <div class="s-slide">3</div>
+        <div class="s-slide">4</div>
+        <div class="s-slide">5</div>
+        <div class="s-slide">6</div>
+        <div class="s-slide">7</div>
+        <div class="s-slide">8</div>
+      </div>
+      <div class="s-navigation">
+        <button class="s-navigation-button s-navigation-button-prev">
+          Prev
+        </button>
+        <button class="s-navigation-button s-navigation-button-next">
+          Next
+        </button>
+      </div>
     </div>
-  </div>
 
-  <div class="s-slider s-slider-5">
-    <div class="s-wrapper">
-      <div class="s-slide">1</div>
-      <div class="s-slide">2</div>
-      <div class="s-slide">3</div>
-      <div class="s-slide">4</div>
-      <div class="s-slide">5</div>
+    <div class="s-slider s-slider-3">
+      <div class="s-wrapper">
+        <div class="s-slide">
+          <img
+            data-src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/800px-Image_created_with_a_mobile_phone.png"
+          />
+        </div>
+        <div class="s-slide">
+          <img
+            data-src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/800px-Image_created_with_a_mobile_phone.png"
+          />
+        </div>
+      </div>
     </div>
-  </div>
 
-  <script type="module" src="/src/demo.ts"></script>
-</body>
+    <div class="s-slider s-slider-4">
+      <div class="s-wrapper">
+        <div class="s-slide">1</div>
+        <div class="s-slide">2</div>
+        <div class="s-slide">3</div>
+        <div class="s-slide">4</div>
+        <div class="s-slide">5</div>
+      </div>
+    </div>
 
+    <div class="s-slider s-slider-5">
+      <div class="s-wrapper">
+        <div class="s-slide">1</div>
+        <div class="s-slide">2</div>
+        <div class="s-slide">3</div>
+        <div class="s-slide">4</div>
+        <div class="s-slide">5</div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/demo.ts"></script>
+  </body>
 </html>

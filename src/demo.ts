@@ -9,6 +9,7 @@ import touch from './middlewares/touch';
 import activeClass from './middlewares/activeClass';
 import vertical from './middlewares/vertical';
 import navigation from './middlewares/navigation';
+import focus from './middlewares/focus';
 
 const instance1 = createSlider({
   element: '.s-slider-1',
@@ -22,7 +23,9 @@ const instance2 = createSlider({
   middlewares: [
     spaceBetween(16),
     slidesPerView(6),
-
+    focus({
+      immediate: true,
+    }),
     breakpoints({
       768: [slidesPerView(1)],
     }),

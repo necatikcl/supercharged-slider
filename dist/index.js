@@ -121,6 +121,8 @@ const createSlider = ({
     runSlideChangeHooks,
     slideTo: (index2, silent = false) => {
       const max = instance.slides.length - instance.slidesPerView;
+      if (max < 0)
+        return;
       if (index2 > max) {
         instance.slideTo(max);
         return;

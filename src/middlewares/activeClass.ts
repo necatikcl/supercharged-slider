@@ -1,6 +1,6 @@
 import { Middleware, Slider } from '~/types';
 
-const getActiveSlides = (slider: Slider) => {
+export const getActiveSlides = (slider: Slider) => {
   const activeView = Math.round(slider.activeView);
 
   return slider.slides.slice(

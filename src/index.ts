@@ -10,6 +10,7 @@ import vertical from './middlewares/vertical';
 import lazyload from './middlewares/lazyload';
 import autoplay from './middlewares/autoplay';
 import navigation from './middlewares/navigation';
+import focus from './middlewares/focus';
 
 export * from './types';
 
@@ -24,4 +25,5 @@ export {
   lazyload,
   navigation,
   autoplay,
+  focus,
 };
