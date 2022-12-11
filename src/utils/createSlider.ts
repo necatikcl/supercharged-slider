@@ -4,7 +4,7 @@ import debounce from './debounce';
 import getElement, { getElements, Selector, SelectorMultiple } from './getElement';
 import { getSlideX } from './getSlidePosition';
 import runMiddlewares from './runMiddlewares';
-import useHooks from './useHooks';
+import createHooks from './createHooks';
 
 interface Props {
   element: Selector,
@@ -37,23 +37,15 @@ const createSlider = ({
     throw new Error('[supercharged-slider] Slides are not found');
   }
 
-  const {
-    addHook: addSlideChangeHook,
-    removeHook: removeSlideChangeHook,
-    runHooks: runSlideChangeHooks,
-  } = useHooks<Slider>();
-  const {
-    addHook: addBeforeSlideChangeHook,
-    removeHook: removeBeforeSlideChangeHook,
-    runHooks: runBeforeSlideChangeHooks,
-  } = useHooks<Slider>();
-  const {
-    addHook: addCleanUpHook,
-    runHooks: runCleanUpHooks,
-    removeHook: removeCleanUpHook,
-  } = useHooks<void>();
+  const slideChangeHook = createHooks<Slider>();
+  const beforeSlideChangeHook = createHooks<Slider>();
+  const cleanUpHook = createHooks<void>();
 
-  if (onSlideChange) addSlideChangeHook(onSlideChange);
+  const addHooksFromProps = () => {
+    if (onSlideChange) slideChangeHook.add(onSlideChange);
+  };
+
+  addHooksFromProps();
 
   const instance: Slider = {
     element,
@@ -66,14 +58,11 @@ const createSlider = ({
     spaceBetween: 0,
     middlewares,
     slideStyles: {},
-    onCleanUp: addCleanUpHook,
-    onSlideChange: addSlideChangeHook,
-    onBeforeSlideChange: addBeforeSlideChangeHook,
-    removeCleanUpHook,
-    removeSlideChangeHook,
-    removeBeforeSlideChangeHook,
-    runBeforeSlideChangeHooks,
-    runSlideChangeHooks,
+    hooks: {
+      beforeSlideChange: slideChangeHook,
+      slideChange: beforeSlideChangeHook,
+      cleanUp: cleanUpHook,
+    },
     slideTo: (index, silent = false) => {
       const max = instance.slides.length - instance.slidesPerView;
 
@@ -95,7 +84,7 @@ const createSlider = ({
       }
 
       if (!silent) {
-        runBeforeSlideChangeHooks(instance);
+        beforeSlideChangeHook.run(instance);
       }
 
       const x = getSlideX(index, instance);
@@ -104,13 +93,13 @@ const createSlider = ({
       instance.activeView = index;
 
       if (!silent) {
-        runSlideChangeHooks(instance);
+        slideChangeHook.run(instance);
       }
     },
     next: () => instance.slideTo(instance.activeView + 1),
     prev: () => instance.slideTo(instance.activeView - 1),
     render: () => {
-      runCleanUpHooks();
+      cleanUpHook.run();
 
       instance.slideWidth = instance.element.clientWidth;
       instance.slideStyles.width = `${instance.slideWidth}px`;
@@ -121,6 +110,9 @@ const createSlider = ({
       instance.updateSlideStyles();
 
       instance.slideTo(instance.activeView, true);
+
+      cleanUpHook.clear();
+      addHooksFromProps();
     },
     updateSlideStyles: () => slides.forEach(
       (slide) => Object.assign(slide.style, instance.slideStyles),

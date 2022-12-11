@@ -60,18 +60,12 @@ const lazyload = (onLoad: OnLoad = () => { }): Middleware => ({
 
     const onSlideChange = (newSlider: Slider) => loadImages(newSlider);
     const onScroll = () => loadImages(slider);
-
-    const onCleanUp = () => {
-      slider.removeSlideChangeHook(onSlideChange);
-      slider.removeCleanUpHook(onCleanUp);
-
-      document.removeEventListener('scroll', onScroll);
-    };
+    const onCleanUp = () => document.removeEventListener('scroll', onScroll);
 
     onSlideChange(slider);
 
-    slider.onSlideChange(onSlideChange);
-    slider.onCleanUp(onCleanUp);
+    slider.hooks.slideChange.add(onSlideChange);
+    slider.hooks.cleanUp.add(onCleanUp);
 
     document.addEventListener('scroll', onScroll, { passive: true });
   },

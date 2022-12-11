@@ -25,14 +25,14 @@ const vertical = (): Middleware => ({
         return;
       }
 
-      slider.runBeforeSlideChangeHooks(slider);
+      slider.hooks.beforeSlideChange.run(slider);
 
       const y = getSlideY(index, slider);
 
       slider.scrollWrapperTo(y);
       slider.activeView = index;
 
-      slider.runSlideChangeHooks(slider);
+      slider.hooks.slideChange.run(slider);
     };
   },
 });

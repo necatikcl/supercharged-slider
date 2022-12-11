@@ -30,11 +30,6 @@ const navigation = (props: Props): Middleware => ({
     prevElement?.addEventListener('click', slider.prev);
     nextElement?.addEventListener('click', slider.next);
 
-    slider.onCleanUp(() => {
-      prevElement?.removeEventListener('click', slider.prev);
-      nextElement?.removeEventListener('click', slider.next);
-    });
-
     const onSlideChange = (newSlider: Slider) => {
       if (prevElement) {
         if (newSlider.activeView === 0) {
@@ -56,15 +51,14 @@ const navigation = (props: Props): Middleware => ({
       }
     };
 
-    onSlideChange(slider);
-
     const onCleanUp = () => {
-      slider.removeSlideChangeHook(onSlideChange);
-      slider.removeCleanUpHook(onCleanUp);
+      prevElement?.removeEventListener('click', slider.prev);
+      nextElement?.removeEventListener('click', slider.next);
     };
 
-    slider.onSlideChange(onSlideChange);
-    slider.onCleanUp(onCleanUp);
+    onSlideChange(slider);
+    slider.hooks.cleanUp.add(onCleanUp);
+    slider.hooks.slideChange.add(onSlideChange);
   },
 });
 

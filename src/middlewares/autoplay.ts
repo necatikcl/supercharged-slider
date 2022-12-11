@@ -23,13 +23,10 @@ const autoplay = (props: Props): Middleware => ({
 
     start();
 
-    const onCleanUp = () => {
-      clearTimeout(timeout);
-      slider.removeCleanUpHook(onCleanUp);
-    };
+    const onCleanUp = () => clearTimeout(timeout);
 
-    slider.onCleanUp(onCleanUp);
-    slider.onSlideChange(start);
+    slider.hooks.cleanUp.add(onCleanUp);
+    slider.hooks.slideChange.add(start);
   },
 });
 

@@ -12,22 +12,22 @@ export const getActiveSlides = (slider: Slider) => {
 const activeClass = (activeClassName = 's-slide-active'): Middleware => ({
   name: 'activeClass',
   callback: (slider) => {
-    slider.onBeforeSlideChange(() => {
-      const activeSlides = getActiveSlides(slider);
-
-      activeSlides.forEach((slide) => slide.classList.remove(activeClassName));
-    });
-
     const handleSlideChange = () => {
       const activeSlides = getActiveSlides(slider);
 
       activeSlides.forEach((slide) => slide.classList.add(activeClassName));
     };
 
+    const handleBeforeSlideChange = () => {
+      const activeSlides = getActiveSlides(slider);
+
+      activeSlides.forEach((slide) => slide.classList.remove(activeClassName));
+    };
+
     handleSlideChange();
 
-    slider.onCleanUp(() => slider.removeSlideChangeHook(handleSlideChange));
-    slider.onSlideChange(handleSlideChange);
+    slider.hooks.beforeSlideChange.add(handleBeforeSlideChange);
+    slider.hooks.slideChange.add(handleSlideChange);
   },
 });
 

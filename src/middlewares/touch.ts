@@ -90,7 +90,7 @@ const touch = (): Middleware => ({
       });
     });
 
-    const onCleanUp = () => {
+    slider.hooks.cleanUp.add(() => {
       isDragging = false;
       wrapperPositionBeforeDrag = 0;
       lastCursorPosition = 0;
@@ -98,11 +98,7 @@ const touch = (): Middleware => ({
 
       document.removeEventListener('mousedown', onMouseDown);
       document.removeEventListener('mouseup', onMouseUp);
-
-      slider.removeCleanUpHook(onCleanUp);
-    };
-
-    slider.onCleanUp(onCleanUp);
+    });
   },
 });
 

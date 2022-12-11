@@ -65,12 +65,10 @@ const focus = ({
 
       listeners.clear();
       focusedSlide?.classList.remove(focusClassName);
-      slider.removeSlideChangeHook(onSlideChange);
-      slider.removeCleanUpHook(onCleanUp);
     };
 
-    slider.onSlideChange(onSlideChange);
-    slider.onCleanUp(onCleanUp);
+    slider.hooks.slideChange.add(onSlideChange);
+    slider.hooks.cleanUp.add(onCleanUp);
   },
 });
 

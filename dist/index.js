@@ -345,6 +345,10 @@ const vertical = () => ({
     };
   }
 });
+const isElementVisible = (element, offset = 200) => {
+  const bounding = element.getBoundingClientRect();
+  return bounding.top >= 0 && bounding.bottom <= window.innerHeight + offset;
+};
 const loadImage = (image) => {
   const src = image.getAttribute("data-src");
   if (!src)
@@ -359,14 +363,21 @@ const lazyload = (onLoad = () => {
   callback: (slider) => {
     let indexesLoaded = [];
     const loadImages = (newSlider) => {
+      if (!isElementVisible(newSlider.element)) {
+        return;
+      }
       const start = Math.max(newSlider.activeView - 1, 0);
       let end = newSlider.activeView + newSlider.slidesPerView;
       end = Math.min(end + 1, newSlider.slides.length);
       const slides = newSlider.slides.slice(start, end);
+      const indexesToLoad = [];
       for (let i = start; i < end; i += 1) {
-        indexesLoaded.push(i);
+        indexesToLoad.push(i);
       }
-      indexesLoaded = [...new Set(indexesLoaded)];
+      if (indexesToLoad.every((index2) => indexesLoaded.includes(index2))) {
+        return;
+      }
+      indexesLoaded = [.../* @__PURE__ */ new Set([...indexesLoaded, ...indexesToLoad])];
       const images = slides.flatMap(
         (slide) => getElements(slide.querySelectorAll("img"))
       );
@@ -377,13 +388,16 @@ const lazyload = (onLoad = () => {
       });
     };
     const onSlideChange = (newSlider) => loadImages(newSlider);
+    const onScroll = () => loadImages(slider);
     const onCleanUp = () => {
       slider.removeSlideChangeHook(onSlideChange);
       slider.removeCleanUpHook(onCleanUp);
+      document.removeEventListener("scroll", onScroll);
     };
     onSlideChange(slider);
     slider.onSlideChange(onSlideChange);
     slider.onCleanUp(onCleanUp);
+    document.addEventListener("scroll", onScroll, { passive: true });
   }
 });
 const autoplay = (props) => ({
@@ -458,4 +472,56 @@ const navigation = (props) => ({
     slider.onCleanUp(onCleanUp);
   }
 });
-export { activeClass, autoplay, breakpoints, createSlider, lazyload, navigation, slidesPerView, spaceBetween, touch, vertical };
+const focus = ({
+  focusClassName = "s-slide-focus",
+  immediate = false,
+  onSlideFocus = () => null
+}) => ({
+  name: "focus",
+  callback: (slider) => {
+    let focusedSlide = null;
+    const onClick = (slide) => {
+      if (focusedSlide === slide)
+        return;
+      if (focusedSlide) {
+        focusedSlide.classList.remove(focusClassName);
+      }
+      focusedSlide = slide;
+      slide.classList.add("s-slide-focus");
+      onSlideFocus(slide);
+    };
+    if (immediate) {
+      onClick(slider.slides[0]);
+    }
+    const listeners = /* @__PURE__ */ new Map();
+    slider.slides.forEach((slide) => {
+      const fn = () => onClick(slide);
+      listeners.set(slide, fn);
+      slide.addEventListener("click", fn);
+    });
+    const onSlideChange = () => {
+      if (!focusedSlide)
+        return;
+      const activeSlides = getActiveSlides(slider);
+      const focusedSlideIsInView = activeSlides.includes(focusedSlide);
+      if (!focusedSlideIsInView) {
+        onClick(activeSlides[0]);
+      }
+    };
+    const onCleanUp = () => {
+      slider.slides.forEach((slide) => {
+        if (!listeners.has(slide))
+          return;
+        const fn = listeners.get(slide);
+        slide.removeEventListener("click", fn);
+      });
+      listeners.clear();
+      focusedSlide == null ? void 0 : focusedSlide.classList.remove(focusClassName);
+      slider.removeSlideChangeHook(onSlideChange);
+      slider.removeCleanUpHook(onCleanUp);
+    };
+    slider.onSlideChange(onSlideChange);
+    slider.onCleanUp(onCleanUp);
+  }
+});
+export { activeClass, autoplay, breakpoints, createSlider, focus, lazyload, navigation, slidesPerView, spaceBetween, touch, vertical };
